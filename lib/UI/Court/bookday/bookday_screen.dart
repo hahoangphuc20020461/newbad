@@ -9,10 +9,11 @@ import 'package:intl/intl.dart';
 import 'package:newbad/Model/dashboard.dart';
 import 'package:newbad/Service/config.dart';
 import 'package:newbad/Service/dashboardusersv.dart';
+import 'package:newbad/Service/getuserId.dart';
 
 class SchedulePage extends StatefulWidget {
   const SchedulePage({super.key, required this.token, required this.courtId});
-  final token;
+  final String token;
   final String courtId;
 
   @override
@@ -45,19 +46,35 @@ class _SchedulePageState extends State<SchedulePage> {
   List<String> listend = ['06:59', '08:59', '10:59', '12:59', '14:59', '16:59', '18:59', '20:59', '22:59'];
 
   bool click = false;
-  late String userId;
   
   String isoDateDirect = DateTime.now().toIso8601String();
   Future<List<DashBoardforAdmin>>? _futureDashboardData;
-
+//   String? userid;
+//     String? userId;
+// Future<void> _loadUserId() async {
+//     // Gọi SharedPreferencesService để lấy userId
+//     userId = await LoginService.getUserId();
+//     // Để cập nhật UI sau khi nhận userId, gọi setState
+//     if (userId != null) {
+//     // Nếu userId không phải là null, giờ chúng ta có thể decode nó
+//     var jwtDecodeToken = JwtDecoder.decode(userId!);
+//     userid = jwtDecodeToken!['_id'];
+//     print("User ID retrieved: ${jwtDecodeToken!['_id']}");
+//   } else {
+//     // userId là null, xử lý trường hợp này
+//     print('vcl null r');
+//   }
+//     setState(() {});
+//   }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Map<String, dynamic> jwtDecodeToken = JwtDecoder.decode(widget.token);
+    // Map<String, dynamic> jwtDecodeToken = JwtDecoder.decode(widget.token);
 
-    userId = jwtDecodeToken['_id'];
+    // userId = jwtDecodeToken['_id'];
     _futureDashboardData = DashBoardforUser.fetchallDashboardData();
+    //_loadUserId();
   }
 
   void button() {
@@ -69,7 +86,7 @@ class _SchedulePageState extends State<SchedulePage> {
     void addCourt(String start, String end) async {
       var regBody = {
         "courtId": widget.courtId,
-        "userId" : userId,
+        "userId" : widget.token,
         "starttime": start,
         "endtime": end,
         "date": isoDateDirect,
@@ -171,14 +188,14 @@ class Hourly extends StatelessWidget {
             if  (click == true) {
               showDialog(context: context, builder: ( (context) {
                               return AlertDialog(
-                                title: Text("Đặt sân thành công"),
+                                title: Text("Ca này đã được đặt trước, vui lòng chọn ca khác"),
                                 actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Đóng"))],
                               );
                             }));
             } else {
               showDialog(context: context, builder: ( (context) {
                               return AlertDialog(
-                                title: Text("Ca này đã được đặt trước, vui lòng chọn ca khác"),
+                                title: Text("Đặt sân thành công"),
                                 actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Đóng"))],
                               );
                             }));

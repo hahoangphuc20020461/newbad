@@ -1,5 +1,8 @@
 
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:newbad/Service/getuserId.dart';
 import 'package:newbad/UI/Mainpage/home_screen.dart';
 import 'package:newbad/UI/Mainpage/noti_screen.dart';
 import 'package:newbad/UI/Mainpage/rentcourt_screen.dart';
@@ -19,7 +22,7 @@ class _NavigatePageState extends State<NavigatePage> {
   int _bottomNavIndex = 0;
   late PageController pageController;
   List<Widget> listpage = [HomePage(), RentCourtPage(), NotifycationPage(), AccountPage(title: '')];
-
+  late String username;
    @override
   void initState() {
     
@@ -28,10 +31,12 @@ class _NavigatePageState extends State<NavigatePage> {
     super.initState();
     Map<String, dynamic> jwtDecodeToken = JwtDecoder.decode(widget.token);
 
-    late String username = jwtDecodeToken['username'];
+    username = jwtDecodeToken['_id'];
   pageController = PageController();
-  
+  //await LoginService.saveUserId(username);
+  //_getUserId(username);
   }
+  
 
   @override
   void dispose() {

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http ;
 import 'package:flutter/material.dart';
 import 'package:newbad/Service/config.dart';
+import 'package:newbad/Service/getuserId.dart';
 import 'package:newbad/UI/User/signup.dart';
 import 'package:newbad/UI/navigator_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -68,10 +69,15 @@ class _LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         var myToken = jsonResponse['accessToken'];
+        
+        
+        await LoginService.saveUserId(myToken);
 
         // Kiểm tra xem token có tồn tại không
         if (myToken != null && myToken.isNotEmpty) {
+          //var userId = jsonResponse['_id'];
           // Token hợp lệ, chuyển qua màn hình mới
+          //await LoginService.saveUserId(userId);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => NavigatePage(token: myToken)),
@@ -98,6 +104,10 @@ class _LoginPageState extends State<LoginPage> {
   void initSharedPref() async {
     preferences = await SharedPreferences.getInstance();
   }
+  Future<void> saveUserId(String userId) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('userId', userId);
+}
   @override
   void initState() {
     // TODO: implement initState

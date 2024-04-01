@@ -6,6 +6,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:newbad/Model/dashboard.dart';
 import 'package:newbad/Service/dashboardusersv.dart';
+import 'package:newbad/Service/getuserId.dart';
+import 'package:newbad/UI/Court/bookday/bookday_screen.dart';
 import 'package:newbad/UI/Court/map_screen.dart';
 
 class CourtPage extends StatefulWidget {
@@ -63,17 +65,38 @@ Future<void> _getPlace() async {
       });
     }
   }
-  late String userId;
+  Map<String, dynamic>? jwtDecodeToken;
   Future<List<DashBoardforAdmin>>? _futureDashboardData;
+   String? userid; 
+    String? userId;
+Future<void> _loadUserId() async {
+    // Gọi SharedPreferencesService để lấy userId
+    userId = await LoginService.getUserId();
+    // Để cập nhật UI sau khi nhận userId, gọi setState
+    if (userId != null) {
+    // Nếu userId không phải là null, giờ chúng ta có thể decode nó
+    jwtDecodeToken = JwtDecoder.decode(userId!);
+    userid = jwtDecodeToken!['_id'];
+    print("User ID retrieved: ${jwtDecodeToken!['_id']}");
+  } else {
+    // userId là null, xử lý trường hợp này
+    print('vcl null r');
+  }
+    setState(() {});
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _getPlace();
-    // Map<String, dynamic> jwtDecodeToken = JwtDecoder.decode(widget.token);
+     
 
     // userId = jwtDecodeToken['_id'];
     _futureDashboardData = DashBoardforUser.fetchallDashboardData();
+    // Map<String, dynamic> jwtDecodeToken = JwtDecoder.decode(userId!);
+    // userid = jwtDecodeToken['_id'];
+    _loadUserId();
+    
   }
 
   
@@ -211,7 +234,9 @@ Future<void> _getPlace() async {
                 crossAxisSpacing: 4.0, // Khoảng cách giữa các cột
                 shrinkWrap: true, // Cho phép GridView co lại để vừa với nội dung
                 physics: NeverScrollableScrollPhysics(), // Vô hiệu hóa cuộn trong GridView
-                children: List.generate(6, (index) => _courts(court: index, idcourt: snapshot.data![index].id, press: (){},)),
+                children: List.generate(6, (index) => _courts(court: index, idcourt: snapshot.data![index].id, press: (){
+                  print(userid);
+                }, token: userid!,)),
               );
           }
                   }
@@ -275,11 +300,13 @@ Future<void> _getPlace() async {
 
 class _courts extends StatelessWidget {
   const _courts({
-    super.key, required this.court, required this.idcourt, required this.press, 
+    super.key, required this.court, required this.idcourt, required this.press, required this.token, 
   });
   final int court;
   final String idcourt;
   final VoidCallback press;
+  final String token;
+
   
 
   @override
@@ -291,9 +318,10 @@ class _courts extends StatelessWidget {
     InkWell(
       onTap: () {
         press();
-      // Navigator.push(context, MaterialPageRoute(builder: (context) => SchedulePage(courtId: idcourt, token: token,)));
+       Navigator.push(context, MaterialPageRoute(builder: (context) => SchedulePage(courtId: idcourt, token: token,)));
         // Hành động khi nút được bấm
         print('Nút hình ảnh được bấm! $idcourt');
+        
       },
       child: Image.asset(
         'assets/field.png', // Thay thế đường dẫn của hình ảnh bạn muốn hiển thị

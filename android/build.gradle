@@ -6,6 +6,7 @@ buildscript {
         // Có thể thêm jcenter() nếu cần, nhưng nên ưu tiên google() và mavenCentral()
     }
     dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
