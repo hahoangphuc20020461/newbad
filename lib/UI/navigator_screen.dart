@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:newbad/Service/getuserId.dart';
 import 'package:newbad/UI/Mainpage/home_screen.dart';
 import 'package:newbad/UI/Mainpage/noti_screen.dart';
-import 'package:newbad/UI/Mainpage/rentcourt_screen.dart';
+import 'package:newbad/UI/Mainpage/rentingcourt_screen.dart';
 import 'package:newbad/UI/User/account_screen.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -21,7 +21,7 @@ class NavigatePage extends StatefulWidget {
 class _NavigatePageState extends State<NavigatePage> {
   int _bottomNavIndex = 0;
   late PageController pageController;
-  List<Widget> listpage = [HomePage(), RentCourtPage(), NotifycationPage(), AccountPage(title: '')];
+  List<Widget> listpage = [HomePage(), RentingCourtPage(), NotifycationPage(), AccountPage(title: '')];
   late String username;
    @override
   void initState() {

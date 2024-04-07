@@ -58,7 +58,7 @@ class _StartPageState extends State<StartPage> {
             width: 249,
             height: 45,
             child: ElevatedButton.icon(onPressed:(){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(title: '',)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
             } ,
             style: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(kbackgroundAppbar)

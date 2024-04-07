@@ -1,6 +1,8 @@
 class San1DayCTA {
   var courtId;
   var userId;
+  var tensan;
+  var sansomay;
   var starttime;
   var endtime;
   var date;
@@ -11,6 +13,8 @@ class San1DayCTA {
   San1DayCTA({
     this.courtId,
     this.userId,
+    this.tensan,
+    this.sansomay,
     this.starttime,
     this.endtime,
     this.date,
@@ -23,6 +27,8 @@ class San1DayCTA {
     return San1DayCTA(
         courtId: json["courtId"],
         userId: json['userId'],
+        tensan: json['tensan'],
+        sansomay: json['sansomay'],
         starttime: json['starttime'],
         endtime: json["endtime"],
         date: json["date"],

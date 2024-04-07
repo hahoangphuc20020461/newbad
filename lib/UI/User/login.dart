@@ -9,9 +9,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key, required this.title});
+  const LoginPage({super.key,});
 
-  final String title;
+  
   
 
   @override
@@ -72,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
         
         
         await LoginService.saveUserId(myToken);
+        await LoginService.saveToken(myToken);
 
         // Kiểm tra xem token có tồn tại không
         if (myToken != null && myToken.isNotEmpty) {
@@ -82,6 +83,7 @@ class _LoginPageState extends State<LoginPage> {
             context,
             MaterialPageRoute(builder: (context) => NavigatePage(token: myToken)),
           );
+          print(myToken);
         } else {
           // Token không hợp lệ hoặc thiếu, hiển thị thông báo lỗi
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(

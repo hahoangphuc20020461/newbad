@@ -1,0 +1,7 @@
+0 Không nhận diện được
+1 Lưới bình thường
+2 Lưới rách
+3 Sân bình thường
+4 Sân gồ ghề
+5 Sân rách
+6 vạch mờ

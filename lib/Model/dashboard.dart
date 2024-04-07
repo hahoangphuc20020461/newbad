@@ -5,6 +5,8 @@ class DashBoardforAdmin {
   var location;
   var image;
   var id;
+  var linklocation;
+  List<String>? soluongsan;
   
 
   DashBoardforAdmin({
@@ -13,7 +15,9 @@ class DashBoardforAdmin {
     this.phonenumber,
     this.location,
     this.image,
-    this.id
+    this.id,
+    this.linklocation,
+    this.soluongsan
   });
 
   factory DashBoardforAdmin.fromJson(Map<String, dynamic> json) {
@@ -23,7 +27,11 @@ class DashBoardforAdmin {
         phonenumber: json['phonenumber'],
         location: json["location"],
         image: json["image"],
-        id: json["_id"]
+        id: json["_id"],
+        linklocation: json["linklocation"],
+        soluongsan: json['soluongsan'] != null
+          ? List<String>.from(json['soluongsan'])
+          : null,
         );
   }
 }

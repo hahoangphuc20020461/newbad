@@ -24,25 +24,31 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
   TextEditingController tenchusan =TextEditingController();
   TextEditingController phonenumber = TextEditingController();
   TextEditingController location =TextEditingController();
+  TextEditingController linkvitri = TextEditingController();
+  TextEditingController soluongsan = TextEditingController();
   late String useradminId;
   bool isnotValidate = false;
   final ImagePicker _picker = ImagePicker();
   XFile? _image;
   List<DashBoardforAdmin> item = [];
   Timer? _pollingTimer;
-  
+  //soluongsan.text.split(',').map((item) => item.trim()).toList();
 
   void addCourt() async {
     String base64Image = base64Encode(File(_image!.path).readAsBytesSync());
     //String fileName = _image!.path.split("/").last;
-    if (tensan.text.isNotEmpty && tenchusan.text.isNotEmpty && phonenumber.text.isNotEmpty && location.text.isNotEmpty) {
+    List<String> soluongSanArray = soluongsan.text.split(',').map((e) => e.trim()).toList();
+    if (tensan.text.isNotEmpty && tenchusan.text.isNotEmpty &&
+     phonenumber.text.isNotEmpty && location.text.isNotEmpty && linkvitri.text.isNotEmpty) {
       var regBody = {
         "useradminId": useradminId,
         "name" : tensan.text,
         "nameofpeople": tenchusan.text,
         "phonenumber": phonenumber.text,
         "location": location.text,
-        "image": base64Image
+        "image": base64Image,
+        "linklocation": linkvitri.text,
+        "soluongsan": soluongSanArray
       };
       
       var response = await http.post(Uri.parse(addcourt),
@@ -53,6 +59,8 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
       
       if (jsonResponse['status']) {
         //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(title: '',)));
+        print('ok');
+        print("Số lượng sân: $soluongSanArray");
       } else {
         print('loi roi');
       }
@@ -219,6 +227,9 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                 SizedBox(height: 10,),
                 _inputField("Vị trí sân", location),
                 SizedBox(height: 10,),
+                _inputField("Link vị trí",linkvitri),
+                SizedBox(height: 10,),
+                _inputField("Nhập số lượng sân theo mẫu: 1, 2, ...", soluongsan),
                 Row(
                   children: [
                     Text("Thêm ảnh mô tả sân của bạn"),
@@ -249,7 +260,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                           child: Text('Thêm'),
                           onPressed: () {
                             addCourt();
-                            fetchData();
+                            //fetchData();
                             // Add your add to-do code here
                             
                             showDialog(context: context, builder: ( (context) {
@@ -303,7 +314,10 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                   itemCount: snapshot.data?.length ?? 0,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(padding: EdgeInsets.only(left: 10, right: 10),
-                    child: CardList(courtname: snapshot.data![index].name ?? 'unnamed', location: snapshot.data![index].location ?? 'none', image: snapshot.data![index].image, hotenchusan: snapshot.data![index].nameofpeople, sodienthoai: snapshot.data![index].phonenumber, vitritrongsan: snapshot.data![index].location,tokenn: widget.token, anhthumnail: snapshot.data![index].image, id: snapshot.data![index].id, )// image: item?[index]['image'],),
+                    child: CardList(courtname: snapshot.data![index].name ?? 'unnamed', location: snapshot.data![index].location ?? 'none',
+                     image: snapshot.data![index].image, hotenchusan: snapshot.data![index].nameofpeople,
+                      sodienthoai: snapshot.data![index].phonenumber, vitritrongsan: snapshot.data![index].location,
+                      tokenn: widget.token, anhthumnail: snapshot.data![index].image, id: snapshot.data![index].id, )// image: item?[index]['image'],),
                     ); //snapshot.data![index].name
                  },);
           }
@@ -363,7 +377,8 @@ class CardList extends StatelessWidget {
                   child: Image.memory(bytes),
                   onTap: (){
                     print(id);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => CourtPageAdmin(token: tokenn, hoten: hotenchusan, loc: vitritrongsan, sodienthoai: sodienthoai, anhthumnail: anhthumnail, dashboardId: id, )));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CourtPageAdmin(token: tokenn, hoten: hotenchusan,
+                     loc: vitritrongsan, sodienthoai: sodienthoai, anhthumnail: anhthumnail, dashboardId: id, )));
                   },
                 ),
               width: 340.13,

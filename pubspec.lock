@@ -17,6 +17,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  awesome_notifications:
+    dependency: "direct main"
+    description:
+      name: awesome_notifications
+      sha256: d9e46ce7f5171ee1e9b1c5bc6dc40bd77528561f592842ce97ce3a0a9ae155ef
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.3+1"
+  awesome_notifications_core:
+    dependency: "direct main"
+    description:
+      name: awesome_notifications_core
+      sha256: "38c9f9d2618c0c2abe0cea267dc161aa8c4a0a239ca2263400900b9610f33e6f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.3"
   boolean_selector:
     dependency: transitive
     description:
@@ -784,6 +800,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  quiver:
+    dependency: transitive
+    description:
+      name: quiver
+      sha256: b1c1ac5ce6688d77f65f3375a9abb9319b3cb32486bdc7a1e0fdf004d7ba4e47
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.1"
   rxdart:
     dependency: transitive
     description:
@@ -905,10 +929,10 @@ packages:
     dependency: transitive
     description:
       name: sqflite
-      sha256: a9016f495c927cb90557c909ff26a6d92d9bd54fc42ba92e19d4e79d61e798c6
+      sha256: "5ce2e1a15e822c3b4bfb5400455775e421da7098eed8adc8f26298ada7c9308c"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.2"
+    version: "2.3.3"
   sqflite_common:
     dependency: transitive
     description:
@@ -997,6 +1021,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.1"
+  tflite_flutter:
+    dependency: "direct main"
+    description:
+      name: tflite_flutter
+      sha256: ffb8651fdb116ab0131d6dc47ff73883e0f634ad1ab12bb2852eef1bbeab4a6a
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.10.4"
+  tflite_v2:
+    dependency: "direct main"
+    description:
+      name: tflite_v2
+      sha256: cedfa87aea6d0feb009a3d6f56ef7f2076617a916d3b002ff867c00aa3c69125
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   typed_data:
     dependency: transitive
     description:

@@ -1,13 +1,13 @@
 
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:newbad/Model/dashboard.dart';
 import 'package:newbad/Service/dashboardusersv.dart';
 import 'package:newbad/UI/Court/court_screen.dart';
-import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:permission_handler/permission_handler.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key, });
@@ -28,125 +28,7 @@ class _HomePageState extends State<HomePage> {
   //   googleMapController = controller;
   // }
   String _location = 'Đang tìm vị trí...';
-  // Future<void> _determinePosition() async {
-  //   bool serviceEnabled;
-  //   LocationPermission permission;
-
-  //   // Kiểm tra xem dịch vụ vị trí có được bật không
-  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  //   if (!serviceEnabled) {
-  //     setState(() {
-  //       _location = 'Dịch vụ vị trí bị tắt. Xin hãy bật nó lên.';
-  //     });
-  //     return;
-  //   }
-
-  //   permission = await Geolocator.checkPermission();
-  //   if (permission == LocationPermission.denied) {
-  //     permission = await Geolocator.requestPermission();
-  //     if (permission == LocationPermission.denied) {
-  //       setState(() {
-  //         _location = 'Quyền truy cập vị trí bị từ chối.';
-  //       });
-  //       return;
-  //     }
-  //   }
-    
-  //   if (permission == LocationPermission.deniedForever) {
-  //     // Quyền truy cập vị trí bị từ chối vĩnh viễn.
-  //     setState(() {
-  //       _location = 'Quyền truy cập vị trí bị từ chối vĩnh viễn. Chúng tôi không thể yêu cầu quyền.';
-  //     });
-  //     return;
-  //   } 
-
-  //   // Khi đã có quyền, lấy vị trí hiện tại
-  //   Position position = await Geolocator.getCurrentPosition();
-  //   _getPlace(position);
-  // }
-  // Future<void> _getPlace(Position position) async {
-  //   List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
-  //   Placemark place = placemarks[0]; // Lấy địa điểm đầu tiên từ danh sách
-
-  //   setState(() {
-  //     _location = '${place.locality}, ${place.country}';
-  //   });
-  // }
-
-  // _checkLocationPermission() async {
-  //   final PermissionStatus status = await Permission.locationWhenInUse.status;
-
-  //   if (status.isGranted) {
-  //     _determinePosition();
-  //   } else if (status.isDenied) {
-  //     // Yêu cầu quyền truy cập vị trí
-  //     final result = await Permission.locationWhenInUse.request();
-  //     if (result.isGranted) {
-  //       _determinePosition();
-  //     }
-  //   }
-  // }
-
-
-//   Future<void> _determinePosition() async {
-//   print("Starting to determine position...");
-//   bool serviceEnabled;
-//   LocationPermission permission;
-
-//   // Kiểm tra xem dịch vụ vị trí có được bật không
-//   serviceEnabled = await Geolocator.isLocationServiceEnabled();
-//   if (!serviceEnabled) {
-//     print("Location services are disabled.");
-//     setState(() {
-//       _location = 'Dịch vụ vị trí bị tắt. Xin hãy bật nó lên.';
-//     });
-//     return;
-//   }
-
-//   permission = await Geolocator.checkPermission();
-//   if (permission == LocationPermission.denied) {
-//     print("Location permissions are denied. Requesting...");
-//     permission = await Geolocator.requestPermission();
-//     if (permission == LocationPermission.denied) {
-//       print("Location permissions are denied after request.");
-//       setState(() {
-//         _location = 'Quyền truy cập vị trí bị từ chối.';
-//       });
-//       return;
-//     }
-//   }
   
-//   if (permission == LocationPermission.deniedForever) {
-//     print("Location permissions are permanently denied.");
-//     setState(() {
-//       _location = 'Quyền truy cập vị trí bị từ chối vĩnh viễn. Chúng tôi không thể yêu cầu quyền.';
-//     });
-//     return;
-//   } 
-
-//   print("Getting current position...");
-//   Position position = await Geolocator.getCurrentPosition();
-//   print("Position: ${position.latitude}, ${position.longitude}");
-//   _getPlace(position);
-// }
-
-// Future<void> _getPlace(Position position) async {
-//   print("Getting place from coordinates...");
-//   try {
-//     List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
-//     Placemark place = placemarks[0]; // Lấy địa điểm đầu tiên từ danh sách
-
-//     print("Place: ${place.locality}, ${place.country}");
-//     setState(() {
-//       _location = '${place.locality}, ${place.country}';
-//     });
-//   } catch (e) {
-//     print("Error getting place: $e");
-//     setState(() {
-//       _location = "Không thể lấy được địa điểm.";
-//     });
-//   }
-// }
 
 Future<void> _determinePosition() async {
   try {
@@ -203,8 +85,6 @@ Future<void> requestLocationPermission() async {
   }
   @override
   Widget build(BuildContext context) {
-    
-   
     return Scaffold(
       
       // bottomNavigationBar: SalomonBottomBar(
@@ -243,49 +123,60 @@ Future<void> requestLocationPermission() async {
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: SearchAnchor(
-                      builder: (BuildContext context, SearchController controller) {
-                    return SearchBar(
-                      controller: controller,
-                      padding: const MaterialStatePropertyAll<EdgeInsets>(
-                          EdgeInsets.symmetric(horizontal: 16.0)),
-                      onTap: () {
-                        controller.openView();
-                      },
-                      onChanged: (_) {
-                        controller.openView();
-                      },
-                      leading: const Icon(Icons.search),
-                      // trailing: <Widget>[
-                      //   Tooltip(
-                      //     message: 'Change brightness mode',
-                      //     child: IconButton(
-                      //       isSelected: isDark,
-                      //       onPressed: () {
-                      //         setState(() {
-                      //           isDark = !isDark;
-                      //         });
-                      //       },
-                      //       icon: const Icon(Icons.wb_sunny_outlined),
-                      //       selectedIcon: const Icon(Icons.brightness_2_outlined),
-                      //     ),
-                      //   )
-                      // ],
-                    );
-                  }, suggestionsBuilder:
-                          (BuildContext context, SearchController controller) {
-                    return List<ListTile>.generate(5, (int index) {
-                      final String item = 'item $index';
-                      return ListTile(
-                        title: Text(item),
+                  child: FutureBuilder(
+                    future: _futureDashboardData,
+                    builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) { 
+                      return SearchAnchor(
+                        builder: (BuildContext context, SearchController controller) {
+                      return SearchBar(
+                        controller: controller,
+                        padding: const MaterialStatePropertyAll<EdgeInsets>(
+                            EdgeInsets.symmetric(horizontal: 16.0)),
                         onTap: () {
-                          setState(() {
-                            controller.closeView(item);
-                          });
+                          controller.openView();
                         },
+                        onChanged: (_) {
+                          controller.openView();
+                        },
+                        leading: const Icon(Icons.search),
+                        // trailing: <Widget>[
+                        //   Tooltip(
+                        //     message: 'Change brightness mode',
+                        //     child: IconButton(
+                        //       isSelected: isDark,
+                        //       onPressed: () {
+                        //         setState(() {
+                        //           isDark = !isDark;
+                        //         });
+                        //       },
+                        //       icon: const Icon(Icons.wb_sunny_outlined),
+                        //       selectedIcon: const Icon(Icons.brightness_2_outlined),
+                        //     ),
+                        //   )
+                        // ],
                       );
+                    }, suggestionsBuilder:
+                            (BuildContext context, SearchController controller) {
+                      return List<ListTile>.generate(snapshot.data?.length, (int index) {
+                        final String item = snapshot.data![index].name;
+                        return ListTile(
+                          title: Text(item),
+                          onTap: () {
+                            print(snapshot.data![index].soluongsan.length);
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => CourtPage(hoten: snapshot.data![index].nameofpeople,
+                     sodienthoai: snapshot.data![index].phonenumber, loc: snapshot.data![index].location, anhthumnail: snapshot.data![index].nameofpeople,
+                      dashboardId: snapshot.data![index].id, namecourt: snapshot.data![index].name, soluongsan: snapshot.data![index].soluongsan.length, 
+                      listsan: snapshot.data![index].soluongsan,
+                      )));
+                              //controller.closeView(item);
+                            
+                          },
+                        );
+                      });
                     });
-                  }),
+                     },
+                    
+                  ),
                 ),
               ),
 
@@ -373,8 +264,9 @@ Future<void> requestLocationPermission() async {
                       child: CardList(name: snapshot.data![index].name,
                        location: snapshot.data![index].location,
                         hotenchusan: snapshot.data![index].nameofpeople, sodienthoai: snapshot.data![index].phonenumber,
-                         vitritrongsan: snapshot.data![index].phonenumber, anhthumnail: snapshot.data![index].phonenumber,
-                          id: snapshot.data![index].phonenumber,),
+                         vitritrongsan: snapshot.data![index].phonenumber, anhthumnail: snapshot.data![index].image,
+                          id: snapshot.data![index].id, soluongsan: snapshot.data![index].soluongsan.length,
+                           listsan: snapshot.data![index].soluongsan, image: snapshot.data![index].image, ),
                       );
                    },);
           }
@@ -390,12 +282,18 @@ Future<void> requestLocationPermission() async {
   }
 }
 
-
+Uint8List base64ToUint8List(String base64String) {
+  // Giải mã chuỗi base64 thành mảng byte
+  List<int> byteList = base64.decode(base64String);
+  // Chuyển đổi List<int> thành Uint8List
+  return Uint8List.fromList(byteList);
+}
 
 class CardList extends StatelessWidget {
   const CardList({super.key, required this.name, required this.location,
    required this.hotenchusan, required this.sodienthoai,
-    required this.vitritrongsan, required this.anhthumnail, required this.id});
+    required this.vitritrongsan, required this.anhthumnail, required this.id,
+     required this.soluongsan, required this.listsan, required this.image, });
   final String name;
   final String location;
   final String hotenchusan;
@@ -403,10 +301,15 @@ class CardList extends StatelessWidget {
   final String vitritrongsan;
   final String anhthumnail;
   final String id;
+  final String image;
+  final int soluongsan;
+  final List<String> listsan;
+  
   //final Token;
 
   @override
   Widget build(BuildContext context) {
+    Uint8List bytes = base64ToUint8List(image);
     return Container(
         decoration: ShapeDecoration(
         color: Colors.white,
@@ -423,14 +326,14 @@ class CardList extends StatelessWidget {
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context) => CourtPage(hoten: hotenchusan,
                      sodienthoai: sodienthoai, loc: location, anhthumnail: anhthumnail,
-                      dashboardId: id, namecourt: name, )));
+                      dashboardId: id, namecourt: name, soluongsan: soluongsan, listsan: listsan,)));
                   },
                 ),
               width: 340.13,
               height: 235,
               decoration: ShapeDecoration(
                 image: DecorationImage(
-                  image: NetworkImage("https://via.placeholder.com/340x235"),
+                  image: MemoryImage(bytes),
                    fit: BoxFit.fill,
                 ),
                 shape: RoundedRectangleBorder(
@@ -439,13 +342,16 @@ class CardList extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(230, 15, 0, 0),
+              padding: const EdgeInsets.fromLTRB(30, 15, 0, 0),
               child: Row(
               children: [
                 //SizedBox(width: 220),
                 Icon(Icons.location_on),
                 Text(
                               '$location',
+                              softWrap: true,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: null,
                               style: TextStyle(
                                 color: Color(0xFF0882B4),
                                 fontSize: 12,

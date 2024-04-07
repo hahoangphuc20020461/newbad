@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http ;
 
 class LoginService {
   static const _userIdKey = 'userId';
+  static const _tokenKey = 'myToken';
 
   static Future<void> saveUserId(String userId) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -16,6 +17,16 @@ class LoginService {
   static Future<String?> getUserId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('userId');
+  }
+
+  static Future<void> saveToken(String token) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_tokenKey, token);
+  }
+
+  static Future<String?> getToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_tokenKey);
   }
   // Future<void> loginUser(BuildContext context, String username, String pass) async {
   //   try {

@@ -36,7 +36,7 @@ class _SignupPageState extends State<SignupPage> {
       var jsonResponse = jsonDecode(response.body);
       
       if (jsonResponse['status']) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(title: '',)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
       } else {
         print('loi roi');
       }
