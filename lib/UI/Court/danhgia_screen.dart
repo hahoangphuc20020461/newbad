@@ -1,10 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:newbad/Service/config.dart';
 import 'package:tflite_v2/tflite_v2.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http ;
 
 class DanhGiasanPage extends StatefulWidget {
-  const DanhGiasanPage({super.key});
+  const DanhGiasanPage({super.key, required this.courtId, required this.courtName});
+  final String courtId;
+  final String courtName;
 
   @override
   State<DanhGiasanPage> createState() => _DanhGiasanPageState();
@@ -14,6 +19,21 @@ class _DanhGiasanPageState extends State<DanhGiasanPage> {
   List? _outputs;
   File? _image;
   bool? _loading = false;
+  String? _displayedLabel;
+ // This joins back the rest of the parts excluding the first one
+ void updateLabel() {
+  if (_outputs != null && _outputs!.isNotEmpty && _outputs![0].containsKey("label")) {
+    String output = _outputs![0]["label"];
+    List<String> parts = output.split(' ');
+    String label = parts.sublist(1).join(' '); // Assumes label is always after the first space
+
+    setState(() {
+      _displayedLabel = label; // _displayedLabel should be a state variable
+    });
+  }
+}
+
+
   final ImagePicker _picker = ImagePicker();
   TextEditingController addcomment = TextEditingController();
   @override
@@ -26,6 +46,7 @@ class _DanhGiasanPageState extends State<DanhGiasanPage> {
         _loading = false;
       });
     });
+    
   }
   loadModel() async {
     await Tflite.loadModel(
@@ -80,72 +101,91 @@ class _DanhGiasanPageState extends State<DanhGiasanPage> {
   //   });
   //   classifyImage(_image as File);
   // }
+  void newdanhgia(String message) async {
+      var regBody = {
+        "courtId": widget.courtId,
+        "message": message
+      };
+      
+      var response = await http.post(Uri.parse(newDanhgia),
+      body: jsonEncode(regBody),
+      headers: {"Content-Type":"application/json"}
+      );
+      var jsonResponse = jsonDecode(response.body);
+      
+      if (jsonResponse['status']) {
+        print('Response: $jsonResponse');
+        //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(title: '',)));
+      } else {
+        print('loi roi');
+      }
+    //  else {
+    //   setState(() {
+    //     isnotValidate = true;
+    //   });
+    // }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "Tensorflow Lite",
+          "Đánh giá sân",
           style: TextStyle(color: Colors.white, fontSize: 25),
         ),
-        backgroundColor: Colors.amber,
+        backgroundColor: Colors.green,
         elevation: 0,
       ),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            _loading! ? Container(
-              height: 300,
-              width: 300,
-            ): 
-            Container(
-              margin: EdgeInsets.all(20),
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _image == null ? Container() : Image.file(_image! as File),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  _image == null ? Container() : _outputs != null ? 
-                  Text(_outputs![0]["label"],style: TextStyle(color: Colors.black,fontSize: 20),
-                  ) : Container(child: Text(""))
-                ],
+      body: SingleChildScrollView(
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              _loading! ? Container(
+                height: 300,
+                width: 300,
+              ): 
+              Container(
+                margin: EdgeInsets.all(20),
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _image == null ? Container() : Image.file(_image! as File),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    _image == null ? Container() : _outputs != null ? 
+                    Text(_outputs![0]["label"],style: TextStyle(color: Colors.black,fontSize: 20),
+                    ) : Container(child: Text("")),
+        
+                  ],
+                ),
               ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.01,
-            ),
-            Row(
-              children: [
-                FloatingActionButton(
-                  tooltip: 'Shot Image',
-                  onPressed: shotImage,
-                  child: Icon(Icons.add_a_photo,
-                  size: 20,
-                  color: Colors.white,
-                  ),
-                  backgroundColor: Colors.amber,
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
+              ),
+              FloatingActionButton(
+                tooltip: 'Pick Image',
+                onPressed: pickImage,
+                child: Icon(Icons.photo,
+                size: 20,
+                color: Colors.white,
                 ),
-                FloatingActionButton(
-                  tooltip: 'Pick Image',
-                  onPressed: pickImage,
-                  child: Icon(Icons.photo,
-                  size: 20,
-                  color: Colors.white,
-                  ),
-                  backgroundColor: Colors.amber,
-                ),
-                SizedBox(height: 20,),
-                _inputField('Đánh giá sân ở đây', addcomment )
-              ],
-            ),
-          ],
+                backgroundColor: Colors.green,
+              ),
+              SizedBox(height: 20,),
+              _inputField('Đánh giá sân ở đây', addcomment ),
+              SizedBox(height: 20,),
+              ElevatedButton(onPressed: (){
+                updateLabel();
+                newdanhgia('Có ai đó đã đánh giá sân của bạn là ${addcomment.text} và nhận xét rằng ${_displayedLabel}');
+              }, child: Text('Thêm đánh giá')),
+            ],
+          ),
         ),
       ),
     );

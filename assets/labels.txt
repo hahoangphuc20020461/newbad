@@ -2,6 +2,6 @@
 1 Lưới bình thường
 2 Lưới rách
 3 Sân bình thường
-4 Sân gồ ghề
-5 Sân rách
+4 Sân rách
+5 Sân gồ ghề
 6 vạch mờ

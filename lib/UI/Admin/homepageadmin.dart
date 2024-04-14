@@ -10,6 +10,9 @@ import 'package:newbad/Model/dashboard.dart';
 import 'package:newbad/Service/config.dart';
 import 'package:newbad/Service/dashboardadminsv.dart';
 import 'package:newbad/UI/Admin/courtpageadmin.dart';
+import 'package:newbad/UI/Admin/loginadmin.dart';
+import 'package:newbad/UI/start.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeAdminPage extends StatefulWidget {
   const HomeAdminPage({super.key, required this.token});
@@ -30,12 +33,14 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
   bool isnotValidate = false;
   final ImagePicker _picker = ImagePicker();
   XFile? _image;
+  XFile? _image2;
   List<DashBoardforAdmin> item = [];
   Timer? _pollingTimer;
   //soluongsan.text.split(',').map((item) => item.trim()).toList();
 
   void addCourt() async {
     String base64Image = base64Encode(File(_image!.path).readAsBytesSync());
+    String base64Image2 = base64Encode(File(_image2!.path).readAsBytesSync());
     //String fileName = _image!.path.split("/").last;
     List<String> soluongSanArray = soluongsan.text.split(',').map((e) => e.trim()).toList();
     if (tensan.text.isNotEmpty && tenchusan.text.isNotEmpty &&
@@ -48,7 +53,8 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
         "location": location.text,
         "image": base64Image,
         "linklocation": linkvitri.text,
-        "soluongsan": soluongSanArray
+        "soluongsan": soluongSanArray,
+        "model2d": base64Image2
       };
       
       var response = await http.post(Uri.parse(addcourt),
@@ -70,6 +76,19 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
       });
     }
   }
+
+  Future<void> logoutAdmin(BuildContext context) async {
+  // Xoá token từ storage
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.remove('accessToken');
+
+  // Chuyển người dùng đến trang đăng nhập
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(builder: (context) => StartPage()), // Thay YourLoginPage() bằng trang đăng nhập của bạn
+    (Route<dynamic> route) => false,
+  );
+}
 
   // void getdatadashboard(useradminId) async {
   //   var regBody = {
@@ -146,6 +165,12 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
       _image = pickedImage;
     });
   }
+  Future<void> _pickImage2() async {
+    final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image2 = pickedImage;
+    });
+  }
 
   @override
   void initState() {
@@ -172,6 +197,12 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        semanticLabel: 'Admin',
+        backgroundColor: Colors.white,
+        width: 160,
+        child: ElevatedButton.icon(onPressed: (){logoutAdmin(context);}, icon: Icon(Icons.logout), label: Text("Đăng xuất")),
+      ),//
       appBar: AppBar(
         title: Text("Xin chào ",
         style: TextStyle(
@@ -235,13 +266,26 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                     Text("Thêm ảnh mô tả sân của bạn"),
                   ],
                 ),
+                
                 Row(
                   children: [
                     IconButton(onPressed: (){
                       _pickImage();
                     }, icon: Icon(Icons.add_a_photo)),
                   ],
-                )
+                ),
+                Row(
+                  children: [
+                    Text("Thêm mô hình sân của bạn"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    IconButton(onPressed: (){
+                      _pickImage2();
+                    }, icon: Icon(Icons.photo)),
+                  ],
+                ),
               ],
               ),
               actions: [
@@ -317,7 +361,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                     child: CardList(courtname: snapshot.data![index].name ?? 'unnamed', location: snapshot.data![index].location ?? 'none',
                      image: snapshot.data![index].image, hotenchusan: snapshot.data![index].nameofpeople,
                       sodienthoai: snapshot.data![index].phonenumber, vitritrongsan: snapshot.data![index].location,
-                      tokenn: widget.token, anhthumnail: snapshot.data![index].image, id: snapshot.data![index].id, )// image: item?[index]['image'],),
+                      tokenn: widget.token, anhthumnail: snapshot.data![index].image, id: snapshot.data![index].id, model2d: snapshot.data![index].model2d, )// image: item?[index]['image'],),
                     ); //snapshot.data![index].name
                  },);
           }
@@ -346,7 +390,7 @@ Uint8List base64ToUint8List(String base64String) {
 class CardList extends StatelessWidget {
   const CardList({super.key, required this.courtname, required this.location,
    required this.image, this.tokenn, required this.hotenchusan, required this.sodienthoai,
-    required this.vitritrongsan, required this.anhthumnail, required this.id, }); //required this.image});
+    required this.vitritrongsan, required this.anhthumnail, required this.id, required this.model2d, }); //required this.image});
   final String courtname;
   final String location;
   final String image;
@@ -356,6 +400,7 @@ class CardList extends StatelessWidget {
   final String vitritrongsan;
   final String anhthumnail;
   final String id;
+  final String model2d;
   
 
   @override
@@ -378,7 +423,7 @@ class CardList extends StatelessWidget {
                   onTap: (){
                     print(id);
                     Navigator.push(context, MaterialPageRoute(builder: (context) => CourtPageAdmin(token: tokenn, hoten: hotenchusan,
-                     loc: vitritrongsan, sodienthoai: sodienthoai, anhthumnail: anhthumnail, dashboardId: id, )));
+                     loc: vitritrongsan, sodienthoai: sodienthoai, anhthumnail: anhthumnail, dashboardId: id, model2d: model2d, courtname: courtname, )));
                   },
                 ),
               width: 340.13,

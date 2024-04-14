@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:newbad/UI/start.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key, required this.title});
@@ -19,6 +21,19 @@ class _AccountPageState extends State<AccountPage> {
     // TODO: implement initState
     super.initState();
   }
+
+  Future<void> logoutAdmin(BuildContext context) async {
+  // Xoá token từ storage
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.remove('accessToken');
+
+  // Chuyển người dùng đến trang đăng nhập
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(builder: (context) => StartPage()), // Thay YourLoginPage() bằng trang đăng nhập của bạn
+    (Route<dynamic> route) => false,
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +128,9 @@ class _AccountPageState extends State<AccountPage> {
               trailing: Icon(Icons.chevron_right),
             ),
             ListTile(
-              onTap: () {},
+              onTap: () {
+                logoutAdmin(context);
+              },
               leading: Icon(Icons.logout),
               title: Text('Đăng xuất'),
               trailing: Icon(Icons.chevron_right),

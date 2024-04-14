@@ -7,15 +7,18 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:newbad/Service/config.dart';
+import 'package:newbad/UI/Admin/notipageadmin.dart';
 
 class CourtPageAdmin extends StatefulWidget {
-  const CourtPageAdmin({super.key,required this.token, required this.hoten, required this.loc, required this.sodienthoai, required this.anhthumnail, required this.dashboardId, });
+  const CourtPageAdmin({super.key,required this.token, required this.hoten, required this.loc, required this.sodienthoai, required this.anhthumnail, required this.dashboardId, required this.model2d, required this.courtname, });
   final token;
   final String hoten;
   final String sodienthoai;
   final String loc;
   final String anhthumnail;
+  final String courtname;
  final String dashboardId;
+ final String model2d;
 
   @override
   State<CourtPageAdmin> createState() => _CourtPageAdminState();
@@ -95,6 +98,7 @@ class _CourtPageAdminState extends State<CourtPageAdmin> {
  
   //TextEditingController soluongsan = TextEditingController();
    late Uint8List bytes ;
+   late Uint8List bytes2;
   @override
   void initState() {
     // TODO: implement initState
@@ -102,11 +106,13 @@ class _CourtPageAdminState extends State<CourtPageAdmin> {
     Map<String, dynamic> jwtDecodeToken = JwtDecoder.decode(widget.token);
     //dashboardId = jwtDecodeToken['_id'];
     bytes = base64ToUint8List(widget.anhthumnail); 
+    bytes2 = base64ToUint8List(widget.model2d);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       // appBar: AppBar(title: IconButton(onPressed: (){}, icon: const Icon(
       //   Icons.arrow_back_ios_new
       // )),),
@@ -132,6 +138,7 @@ class _CourtPageAdminState extends State<CourtPageAdmin> {
                       child: IconButton(onPressed: (){
                         Navigator.pop(context);
                       }, icon: const Icon(
+                        color: Colors.black,
                                Icons.arrow_back_ios_new
                              )),
                     ),
@@ -156,7 +163,7 @@ class _CourtPageAdminState extends State<CourtPageAdmin> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Sân CTA',
+                      widget.courtname,
                       style: TextStyle(
                     color: Colors.black,
                     fontSize: 28,
@@ -184,6 +191,13 @@ class _CourtPageAdminState extends State<CourtPageAdmin> {
                                     letterSpacing: -0.12,
                                   ),),
                         ),
+                        
+                        Padding(
+                          padding: const EdgeInsets.only(left: 150),
+                          child: IconButton(onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => NotifycationAdminPage(courtid: widget.dashboardId,)));
+                          }, icon: Icon(Icons.notifications_active)),
+                        )
                       ],
                     ),
                     //SizedBox(height: 12,),
@@ -224,6 +238,16 @@ class _CourtPageAdminState extends State<CourtPageAdmin> {
           ],
         ),
         SizedBox(height: 24,),
+        Text(
+                      'Sơ đồ sân cầu: ',
+                      style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 28,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.28,
+                  ),
+                    ),
         // GridView.count(
         //         crossAxisCount: 2, // Số cột trong GridView
         //         childAspectRatio: 1.0, // Tỉ lệ của từng item (rộng/cao)
@@ -233,58 +257,23 @@ class _CourtPageAdminState extends State<CourtPageAdmin> {
         //         physics: NeverScrollableScrollPhysics(), // Vô hiệu hóa cuộn trong GridView
         //         children: List.generate(6, (index) => _courts(court: index,)),
         //       ),
-        Text(
-                  'Thêm số lượng sân và ảnh tham khảo',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w600,
-                    height: 0.09,
-                    letterSpacing: -0.14,
-                  ),
-                ),
+        Container(
+          width: MediaQuery.of(context).size.width - 30,
+          height: 200,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            image: DecorationImage(image: MemoryImage(bytes2))
+          ),
+        )
                     // ... other details
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 24.0),
-                child: Row(
-                  children: [
-                    Text('Thêm số sân: '),
-                    SizedBox(width: 20,),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 2,
-                      child: _inputField('Số lượng sân', sosan)),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20,),
-              Padding(
-                padding: const EdgeInsets.only(left: 24.0),
-                child: Row(
-                  children: [
-                    Text('Thêm ảnh mô tả'),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 24.0),
-                child: Row(
-                  children: [
-                    IconButton(onPressed: () {}, icon: Icon(Icons.photo)),
-                  ],
-                ),
-              ),
-              TextButton(onPressed: (){
-                addCourtInfo();
-                print(widget.dashboardId);
-                print(sosan);
-                //performAddReviewWithFetchedId();
-              }, child: Text('haha')),
+              
+              
+              
               //_courts(),
-              _buildImageCarousel(imgList)
+              //_buildImageCarousel(imgList)
               
               
             ],

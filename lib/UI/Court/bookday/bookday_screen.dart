@@ -165,7 +165,14 @@ Future<void> _loadUserId() async {
         showDialog(context: context, builder: ( (context) {
                               return AlertDialog(
                                 title: Text("Đặt sân thành công"),
-                                actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Đóng"))],
+                                actions: [TextButton(onPressed: (){
+                                  Navigator.of(context).pop();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Cảm ơn bạn đã đánh giá  sao cho món ăn này'),
+                        backgroundColor: Color(0xFF388E3C),
+                        )
+                      );
+                                  }, child: Text("Đóng"))],
                               );
                             }));
 
@@ -232,6 +239,7 @@ Future<void> _loadUserId() async {
       print('Response: $jsonResponse'); // Thêm logging
       if (jsonResponse['status']) {
         makePayment();
+        newNotify('Bạn đã đặt ${widget.tensan} lúc $selectedDate từ ${start} đến ${end}');
         // Success logic
       } else {
         // Error handling
@@ -250,6 +258,7 @@ Future<void> _loadUserId() async {
   } on Exception catch (e) {
     // Exception handling
     makePayment();
+    newNotify('Bạn đã đặt ${widget.tensan} lúc $selectedDate từ ${start} đến ${end}');
     print('Exception occurred: $e');
   }
     //  else {
@@ -273,6 +282,7 @@ Future<void> _loadUserId() async {
       var jsonResponse = jsonDecode(response.body);
       
       if (jsonResponse['status']) {
+        print('Response: $jsonResponse');
         //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(title: '',)));
       } else {
         print('loi roi');

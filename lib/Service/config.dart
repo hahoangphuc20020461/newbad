@@ -1,5 +1,5 @@
 final url = 'http://192.168.0.67:3001/';
-//final url = 'http://192.168.1.18:3001/';
+//final url = 'http://192.168.1.20:3001/';
 final registration = url + "registration";
 final login = url + "login";
 final loginadmin = url + "loginadmin";
@@ -11,3 +11,6 @@ final getalldatacourt = url + "getalldashboard";
 final bookctasan1day = url + "checksan1ctaday";
 final getbookingcourt = url + "getsan1ctaday";
 final newnotifyuser = url + "newnotify";
+final getnotifyuser = url + "getnotify";
+final newDanhgia = url + "newdanhgia";
+final getDanhgia = url + "getdanhgia/id=";

@@ -1,5 +1,18 @@
 // import 'dart:convert';
-// import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:newbad/Model/testmodel.dart';
+import 'package:newbad/Service/config.dart';
+import 'package:newbad/main.dart';
+import 'package:newbad/sv.dart';
+import 'package:permission_handler/permission_handler.dart';
 // import 'package:flutter_stripe/flutter_stripe.dart';
 // import 'package:http/http.dart' as http;
 
@@ -216,3 +229,137 @@ class _TestTensorFlowState extends State<TestTensorFlow> {
     );
   }
 }
+// import 'dart:math' show cos, sqrt, asin;
+// import 'package:http/http.dart' as http ;
+// class TestNoti extends StatefulWidget {
+//   const TestNoti({super.key});
+
+//   @override
+//   State<TestNoti> createState() => _TestNotiState();
+// }
+
+
+// class _TestNotiState extends State<TestNoti> {
+//   String _location = 'Đang tìm vị trí...';
+//   Future<void> _determinePosition() async {
+//   try {
+//     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+//     print("Vị trí: ${position.latitude}, ${position.longitude}");
+
+//     List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+//     Placemark place = placemarks.first;
+//     setState(() {
+//       _location = '${place.locality}, ${place.country}';
+//     });
+//     print("Địa điểm: $_location");
+//   } catch (e) {
+//     print("Lỗi khi lấy vị trí hoặc địa điểm: $e");
+//     setState(() {
+//       _location = "Không thể lấy được địa điểm.";
+//     });
+//   }
+// }
+
+// Future<void> requestLocationPermission() async {
+//   var status = await Permission.location.request();
+//   if (status.isGranted) {
+//     print("Quyền truy cập vị trí đã được cấp.");
+//     _determinePosition();
+//   } else if (status.isDenied) {
+//     print("Quyền truy cập vị trí bị từ chối.");
+//   } else if (status.isPermanentlyDenied) {
+//     print("Quyền truy cập vị trí bị từ chối vĩnh viễn. Mở cài đặt.");
+//     openAppSettings();
+//   }
+// }
+// // double calculateDistance(lat1, lon1, lat2, lon2) {
+// //   var p = 0.017453292519943295;
+// //   var c = cos;
+// //   var a = 0.5 - c((lat2 - lat1) * p)/2 + 
+// //           c(lat1 * p) * c(lat2 * p) * 
+// //           (1 - c((lon2 - lon1) * p))/2;
+// //   return 12742 * asin(sqrt(a));
+// // }
+// // Future<void> fetchNearbyLocations() async {
+// //     final response = await http.get();
+// //     if (response.statusCode == 200) {
+// //       setState(() {
+// //         nearbyLocations = json.decode(response.body);
+// //       });
+// //     } else {
+// //       throw Exception('Failed to load nearby locations');
+// //     }
+// //   }
+  
+// //   Future<void> showSortedLocations(double latitude, double longitude) async {
+// //   // Lấy vị trí hiện tại
+// //   Position currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+// //   // Lấy dữ liệu từ server
+// //   List<Pos> allPositions = await fetchallDashboardData();
+
+// //   // Tính toán khoảng cách và thêm vào mỗi đối tượng Pos
+// //   for (var pos in allPositions) {
+// //   pos.setDistanceFromCurrent(
+// //     currentPosition.latitude,
+// //     currentPosition.longitude,
+// //   );
+// // }
+
+// //   // Sắp xếp danh sách dựa trên khoảng cách
+// //   allPositions.sort((a, b) => a.distanceFromCurrent!.compareTo(b.distanceFromCurrent!));
+
+// //   // Hiển thị danh sách ra màn hình hoặc xử lý tiếp theo nhu cầu của bạn
+// //   for (var pos in allPositions) {
+// //     //print('${pos.name}: ${pos.distanceFromCurrent} km');
+// //   }
+
+// //   // Cập nhật UI ở đây nếu cần
+// //   setState(() {
+// //     // Cập nhật danh sách địa điểm đã sắp xếp trên UI
+// //   });
+// // }
+
+//   @override
+//   void initState() {
+    
+//     // TODO: implement initState
+//     super.initState();
+
+//   }
+//   final ImagePicker _picker = ImagePicker();
+//   XFile? _image;
+//   Uint8List? _imageData;
+//   String? _base64Image;
+
+//   Future<void> _pickImage() async {
+//     final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+//     if (pickedImage != null) {
+//       Uint8List imageBytes = await File(pickedImage.path).readAsBytes();
+//       String base64Image = base64Encode(imageBytes);
+//       setState(() {
+//         _imageData = imageBytes;
+//         _base64Image = base64Image;
+//       });
+//       print(base64Image);
+//     }
+//   }
+
+//   Uint8List base64ToUint8List(String base64String) {
+//     return base64Decode(base64String);
+//   }
+
+  
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Center(
+//         child:FloatingActionButton(
+//         onPressed: _pickImage,
+//         tooltip: 'Pick Image from Gallery',
+//         child: Icon(Icons.photo_library),
+//       ),
+//       ),
+//     );
+//   }
+// }

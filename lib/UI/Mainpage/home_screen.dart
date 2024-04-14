@@ -9,6 +9,7 @@ import 'package:newbad/Model/dashboard.dart';
 import 'package:newbad/Service/dashboardusersv.dart';
 import 'package:newbad/UI/Court/court_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/link.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key, });
   //final token;
@@ -28,12 +29,16 @@ class _HomePageState extends State<HomePage> {
   //   googleMapController = controller;
   // }
   String _location = 'Đang tìm vị trí...';
-  
+  double? lat;
+  double? lon;
 
 Future<void> _determinePosition() async {
   try {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     print("Vị trí: ${position.latitude}, ${position.longitude}");
+    lat = position.latitude;
+    lon = position.longitude;
+
 
     List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
     Placemark place = placemarks.first;
@@ -166,7 +171,7 @@ Future<void> requestLocationPermission() async {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => CourtPage(hoten: snapshot.data![index].nameofpeople,
                      sodienthoai: snapshot.data![index].phonenumber, loc: snapshot.data![index].location, anhthumnail: snapshot.data![index].nameofpeople,
                       dashboardId: snapshot.data![index].id, namecourt: snapshot.data![index].name, soluongsan: snapshot.data![index].soluongsan.length, 
-                      listsan: snapshot.data![index].soluongsan,
+                      listsan: snapshot.data![index].soluongsan, urlSan: snapshot.data![index].linklocation, model2d: snapshot.data![index].model2d,
                       )));
                               //controller.closeView(item);
                             
@@ -214,15 +219,26 @@ Future<void> requestLocationPermission() async {
               ),
                 Row(
                   children: [
-                    TextButton.icon(onPressed: (){}, icon: Icon(Icons.location_on, // Biểu tượng của nút
-                        color: Colors.green, // Màu của icon
-                        size: 24,), label: Text(
-                        'Xem sân gần đây', // Text hiển thị dưới icon
-                        style: TextStyle(
-                          color: Colors.green, // Màu của text
-                           // Kích thước của text
-                        ),
-                                    ),),
+                    Link(
+                      uri: Uri.parse('https://www.google.com/maps/search/s%C3%A2n+c%E1%BA%A7u+l%C3%B4ng/@${lat},${lon},15z?entry=ttu'),
+                      builder: (BuildContext context, Future<void> Function()? followLink) { 
+                        return TextButton.icon(onPressed: (){
+                          print('object');
+                          if (followLink != null) {
+                              followLink();
+                            }
+                          }, icon: Icon(Icons.location_on, // Biểu tượng của nút
+                          color: Colors.green, // Màu của icon
+                          size: 24,), label: Text(
+                          'Xem sân gần đây', // Text hiển thị dưới icon
+                          style: TextStyle(
+                            color: Colors.green, // Màu của text
+                             // Kích thước của text
+                          ),
+                                      ),);
+                       },
+                     // child: 
+                    ),
                   ],
                 ),  
               
@@ -266,7 +282,8 @@ Future<void> requestLocationPermission() async {
                         hotenchusan: snapshot.data![index].nameofpeople, sodienthoai: snapshot.data![index].phonenumber,
                          vitritrongsan: snapshot.data![index].phonenumber, anhthumnail: snapshot.data![index].image,
                           id: snapshot.data![index].id, soluongsan: snapshot.data![index].soluongsan.length,
-                           listsan: snapshot.data![index].soluongsan, image: snapshot.data![index].image, ),
+                           listsan: snapshot.data![index].soluongsan, image: snapshot.data![index].image,
+                            urlSan: snapshot.data![index].linklocation, model2d: snapshot.data![index].model2d, ),
                       );
                    },);
           }
@@ -293,7 +310,7 @@ class CardList extends StatelessWidget {
   const CardList({super.key, required this.name, required this.location,
    required this.hotenchusan, required this.sodienthoai,
     required this.vitritrongsan, required this.anhthumnail, required this.id,
-     required this.soluongsan, required this.listsan, required this.image, });
+     required this.soluongsan, required this.listsan, required this.image, required this.urlSan, required this.model2d, });
   final String name;
   final String location;
   final String hotenchusan;
@@ -304,6 +321,8 @@ class CardList extends StatelessWidget {
   final String image;
   final int soluongsan;
   final List<String> listsan;
+  final String urlSan;
+  final String model2d;
   
   //final Token;
 
@@ -326,7 +345,7 @@ class CardList extends StatelessWidget {
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context) => CourtPage(hoten: hotenchusan,
                      sodienthoai: sodienthoai, loc: location, anhthumnail: anhthumnail,
-                      dashboardId: id, namecourt: name, soluongsan: soluongsan, listsan: listsan,)));
+                      dashboardId: id, namecourt: name, soluongsan: soluongsan, listsan: listsan, urlSan: urlSan, model2d: model2d,)));
                   },
                 ),
               width: 340.13,

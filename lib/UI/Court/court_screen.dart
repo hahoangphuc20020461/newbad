@@ -11,12 +11,14 @@ import 'package:newbad/Model/dashboard.dart';
 import 'package:newbad/Service/dashboardusersv.dart';
 import 'package:newbad/Service/getuserId.dart';
 import 'package:newbad/UI/Court/bookday/bookday_screen.dart';
+import 'package:newbad/UI/Court/danhgia_screen.dart';
 import 'package:newbad/UI/Court/map_screen.dart';
+import 'package:url_launcher/link.dart';
 
 class CourtPage extends StatefulWidget {
   const CourtPage({super.key, required this.hoten,
    required this.sodienthoai, required this.loc, required this.anhthumnail,
-    required this.dashboardId, required this.namecourt, required this.soluongsan, required this.listsan,  });
+    required this.dashboardId, required this.namecourt, required this.soluongsan, required this.listsan, required this.urlSan, required this.model2d,});
   final String hoten;
   final String sodienthoai;
   final String loc;
@@ -25,6 +27,8 @@ class CourtPage extends StatefulWidget {
  final String namecourt;
  final int soluongsan;
  final List<String> listsan;
+ final String urlSan;
+ final String model2d;
  
  //final String sansomay;
  
@@ -95,6 +99,7 @@ Future<void> _loadUserId() async {
   }
 
   late Uint8List bytes ;
+  late Uint8List bytes2;
   @override
   void initState() {
     // TODO: implement initState
@@ -108,6 +113,7 @@ Future<void> _loadUserId() async {
     // userid = jwtDecodeToken['_id'];
     _loadUserId();
     bytes = base64ToUint8List(widget.anhthumnail); 
+     bytes2 = base64ToUint8List(widget.model2d);
   }
 
   
@@ -177,9 +183,14 @@ Future<void> _loadUserId() async {
                     Row(
                       children: [
                         Icon(Icons.location_on_outlined),
-                        SizedBox(width: 8,),
-                        TextButton(
-                           onPressed: () { Navigator.push(context, MaterialPageRoute(builder: (context) => MapPage())); }
+                        Link(uri: Uri.parse(widget.urlSan),
+                        builder: (BuildContext context, Future<void> Function()? followLink) {
+                          return TextButton(
+                           onPressed: () { 
+                            if (followLink != null) {
+                              followLink();
+                            }
+                            }
                            , child: Text('$_location', // widget.location
                           style: TextStyle(
                                     color: Colors.blue.withOpacity(0.699999988079071),
@@ -189,7 +200,10 @@ Future<void> _loadUserId() async {
                                     height: 0.11,
                                     letterSpacing: -0.12,
                                   ),),
-                        ),
+                        );
+                          },)
+                        //child: SizedBox(width: 8,)
+                        
                       ],
                     ),
                     SizedBox(height: 12,),
@@ -264,7 +278,7 @@ Future<void> _loadUserId() async {
           }),
        
         Text(
-                  'Ảnh tham khảo',
+                  'Sơ đồ sân cầu',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -274,6 +288,15 @@ Future<void> _loadUserId() async {
                     letterSpacing: -0.14,
                   ),
                 ),
+                SizedBox(height: 20,),
+                Container(
+          width: MediaQuery.of(context).size.width - 30,
+          height: 200,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            image: DecorationImage(image: MemoryImage(bytes2))
+          ),
+        )
                     // ... other details
                   ],
                 ),
@@ -308,8 +331,9 @@ Future<void> _loadUserId() async {
                     ),
                     onPressed: () {
                       // Handle button press
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => DanhGiasanPage(courtId: widget.dashboardId, courtName: widget.namecourt,)));
                     },
-                    child: Text('Bình luận'),
+                    child: Text('Đánh giá sân'),
                   ),
                 ),
               ),
