@@ -1,5 +1,6 @@
-final url = 'http://192.168.0.67:3001/';
+//final url = 'http://192.168.0.67:3001/';
 //final url = 'http://192.168.1.20:3001/';
+final url = 'https://badeasybackend.onrender.com/';
 final registration = url + "registration";
 final login = url + "login";
 final loginadmin = url + "loginadmin";
@@ -14,3 +15,9 @@ final newnotifyuser = url + "newnotify";
 final getnotifyuser = url + "getnotify";
 final newDanhgia = url + "newdanhgia";
 final getDanhgia = url + "getdanhgia/id=";
+final guimail = url + "sendmail";
+final resetpass = url + "resetpass";
+final updateInfUser = url + "updateuserinfo/";
+final getInfUser = url + "getuserinfo/";
+final guimailAdmin = url + 'sendmailadmin';
+final resetpassAdmin = url + 'resetpassadmin';

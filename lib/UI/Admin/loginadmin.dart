@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http ;
 import 'package:newbad/Service/config.dart';
+import 'package:newbad/UI/Admin/forgotadmin.dart';
 import 'package:newbad/UI/Admin/homepageadmin.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -148,7 +149,7 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFF8E1),
+      //backgroundColor: Color(0xFFFFF8E1),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(25.0),
@@ -201,33 +202,8 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
                   //loginUser();
                 },
               ),
-              SizedBox(height: 20),
-              Row(
-                children: <Widget>[
-                  Expanded(child: Divider(thickness: 2)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      'Bạn không có tài khoản ?',
-                      style: TextStyle(
-                        color: Color(0xFF6F4E37), // Màu chữ
-                      ),
-                    ),
-                  ),
-                  Expanded(child: Divider(thickness: 2)),
-                ],
-              ),
-              // Social Buttons here
-              //SizedBox(height: 20),
-
-                TextButton(onPressed: () {}, child: RichText(text: TextSpan(
-                          text: 'Đăng ký',
-                          style: TextStyle(
-                            color: Color(0xFF6F4E37), // Màu chữ
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),)),
-              TextButton(onPressed: () {}, child: RichText(text: TextSpan(
+              
+              TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPasswordAdminPage()));}, child: RichText(text: TextSpan(
                           text: 'Quên mật khẩu',
                           style: TextStyle(
                             color: Color(0xFF6F4E37), // Màu chữ

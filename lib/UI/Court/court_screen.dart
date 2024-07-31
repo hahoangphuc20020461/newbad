@@ -1,18 +1,14 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:typed_data';
-import 'package:flutter/widgets.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
+
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:newbad/Model/dashboard.dart';
 import 'package:newbad/Service/dashboardusersv.dart';
 import 'package:newbad/Service/getuserId.dart';
 import 'package:newbad/UI/Court/bookday/bookday_screen.dart';
 import 'package:newbad/UI/Court/danhgia_screen.dart';
-import 'package:newbad/UI/Court/map_screen.dart';
 import 'package:url_launcher/link.dart';
 
 class CourtPage extends StatefulWidget {
@@ -146,6 +142,7 @@ Future<void> _loadUserId() async {
                       child: IconButton(onPressed: (){
                         Navigator.pop(context);
                       }, icon: const Icon(
+                        color: Colors.white,
                                Icons.arrow_back_ios_new
                              )),
                     ),
@@ -191,7 +188,7 @@ Future<void> _loadUserId() async {
                               followLink();
                             }
                             }
-                           , child: Text('$_location', // widget.location
+                           , child: Text(widget.loc, // widget.location
                           style: TextStyle(
                                     color: Colors.blue.withOpacity(0.699999988079071),
                                     fontSize: 12,
@@ -223,10 +220,10 @@ Future<void> _loadUserId() async {
                         Expanded(
                           child: Text('${widget.soluongsan} sân'),
                         ),
-    
-    // ... other children
-  ],
-),
+            
+            // ... other children
+          ],
+        ),
         SizedBox(height: 12,),
         Row(
           children: [
@@ -276,7 +273,7 @@ Future<void> _loadUserId() async {
                 //   print(userid);
                 // }, token: userid!,)),
           }),
-       
+               
         Text(
                   'Sơ đồ sân cầu',
                   style: TextStyle(
@@ -339,7 +336,7 @@ Future<void> _loadUserId() async {
               ),
             ],
           ),
-        ),
+      ),
     );
   }
 }

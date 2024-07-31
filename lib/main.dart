@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:newbad/UI/Admin/loginadmin.dart';
+import 'package:newbad/UI/Mainpage/home_screen.dart';
 import 'package:newbad/UI/User/login.dart';
 import 'package:newbad/UI/start.dart';
-import 'package:newbad/sv.dart';
-import 'package:newbad/test.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +26,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: StartPage(),//(JwtDecoder.isExpired(token)==false) ? HomePage(token: token, ): LoginPage(title: '')//
+      home: HomePage(),//(JwtDecoder.isExpired(token)==false) ? HomePage(token: token, ): LoginPage(title: '')//
     );
   }
 }

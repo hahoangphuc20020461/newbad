@@ -3,23 +3,23 @@ import 'package:http/http.dart' as http ;
 import 'package:flutter/material.dart';
 import 'package:newbad/Service/config.dart';
 import 'package:newbad/Service/getuserId.dart';
-import 'package:newbad/UI/User/forgot_password.dart';
+import 'package:newbad/UI/User/login.dart';
 import 'package:newbad/UI/User/signup.dart';
 import 'package:newbad/UI/navigator_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key,});
+class ResetPasswordPage extends StatefulWidget {
+  const ResetPasswordPage({super.key,});
 
   
   
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _ResetPasswordPageState extends State<ResetPasswordPage> {
   static const Color kbackgroundColor = Color(0xFFf1f1f1);
   static const Color kbackgroundAppbar = Color(0xFF1A5D1A);
   bool isclick = false;
@@ -27,107 +27,15 @@ class _LoginPageState extends State<LoginPage> {
   PageController controller = PageController();
 
 
-  TextEditingController userNameController = TextEditingController();
-  TextEditingController passController =TextEditingController();
-
-  late double _progress;
-  late SharedPreferences preferences;
+  TextEditingController newpassController = TextEditingController();
+  TextEditingController verifycodeController =TextEditingController();
+  TextEditingController emailController =TextEditingController();
 
 
-  // void loginUser() async{
-  //   if (userNameController.text.isNotEmpty && passController.text.isNotEmpty) {
-  //     var regBody = {
-  //       "username" : userNameController.text,
-  //       "password": passController.text
-  //     };
-  //     var response = await http.post(Uri.parse(login),
-  //     body: jsonEncode(regBody),
-  //     headers: {"Content-Type":"application/json"}
-  //     );
-  //     var jsonResponse = jsonDecode(response.body);
-  //     if(jsonResponse['status']) {
-  //       var myToken = jsonResponse['token'];
-  //       preferences.setString('token', myToken);
-  //       Navigator.push(context, MaterialPageRoute(builder: (context) => NavigatePage(token: myToken,)));
-  //     } else {
-  //       print('sai roi');
-  //     }
-  //   }
-  // }
-  Future<void> loginUser(BuildContext context) async {
-    try {
-      var regBody = {
-        "username": userNameController.text,
-        "password": passController.text
-      };
-
-      var response = await http.post(
-        Uri.parse(login), // Thay YOUR_LOGIN_ENDPOINT bằng endpoint của bạn
-        body: jsonEncode(regBody),
-        headers: {"Content-Type": "application/json"},
-      );
-
-      if (response.statusCode == 200) {
-        var jsonResponse = jsonDecode(response.body);
-        var myToken = jsonResponse['accessToken'];
-        
-        
-        await LoginService.saveUserId(myToken);
-        await LoginService.saveToken(myToken);
-
-        // Kiểm tra xem token có tồn tại không
-        if (myToken != null && myToken.isNotEmpty) {
-          //var userId = jsonResponse['_id'];
-          // Token hợp lệ, chuyển qua màn hình mới
-          //await LoginService.saveUserId(userId);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => NavigatePage(token: myToken)),
-          );
-          print(myToken);
-        } else {
-          // Token không hợp lệ hoặc thiếu, hiển thị thông báo lỗi
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('$myToken'),//Invalid token or missing token
-            
-          ));
-        }
-      } else if (response.statusCode == 404) {
-        showDialog(context: context, builder: ( (context) {
-                              return AlertDialog(
-                                title: Text("Vui lòng nhập đúng username hoặc mật khẩu"),
-                                actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Đóng"))],
-                              );
-                            }));
-        print('Email is not found');
-      } else if (response.statusCode == 403) {
-        showDialog(context: context, builder: ( (context) {
-                              return AlertDialog(
-                                title: Text("Vui lòng nhập đúng username hoặc mật khẩu"),
-                                actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Đóng"))],
-                              );
-                            }));
-        print('Password is incorrect');
-      } else {
-        print('Login failed with status code: ${response.statusCode}');
-        print('Error message: ${response.body}');
-      }
-    } catch (e) {
-      print('An error occurred: $e');
-    }
-  }
-  void initSharedPref() async {
-    preferences = await SharedPreferences.getInstance();
-  }
-  Future<void> saveUserId(String userId) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('userId', userId);
-}
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    initSharedPref();
     controller.initialPage;
   }
 
@@ -173,60 +81,46 @@ class _LoginPageState extends State<LoginPage> {
                         
                       ),
               SizedBox(height: 20),
-              _inputField('Username', userNameController),
+              _inputField('Email', emailController),
               Divider(),
               SizedBox(height: 20),
-              _inputField('Password', passController, isPassword: true),
+              _inputField('New Password', newpassController),
+              Divider(),
+              SizedBox(height: 20),
+              _inputField('Verify Code', verifycodeController, isPassword: true),
               Divider(),
               SizedBox(height: 30),
-              ElevatedButton(
-                child: Text('Login', style: TextStyle(color: Color(0xFFF1C93B)),),
+              ElevatedButton(child: Text('Quên mật khẩu', style: TextStyle(color: Color(0xFFF1C93B)),),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF388E3C), // Màu nút đăng nhập
                   padding: EdgeInsets.symmetric(vertical: 15),
                 ),
                 onPressed: () {
-                  //loginUser();
-                  loginUser(context);
+                  if (emailController.text.isNotEmpty && newpassController.text.isNotEmpty && verifycodeController.text.isNotEmpty) {
+                    if (isEmailValid(emailController.text)) {
+                       resetPassword();
+                    } else {
+                      showDialog(context: context, builder: ( (context) {
+                              return AlertDialog(
+                                title: Text("Vui lòng nhập đúng Email"),
+                                actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Đóng"))],
+                              );
+                            }));
+                  } 
+                   
+                  } else {
+                    showDialog(context: context, builder: ( (context) {
+                              return AlertDialog(
+                                title: Text("Vui lòng nhập các thông tin"),
+                                actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Đóng"))],
+                              );
+                            }));
+                  } 
+                  
+                  
                 },
               ),
-              SizedBox(height: 20),
-              Row(
-                children: <Widget>[
-                  Expanded(child: Divider(thickness: 2)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      'Bạn không có tài khoản ?',
-                      style: TextStyle(
-                        color: Color(0xFF6F4E37), // Màu chữ
-                      ),
-                    ),
-                  ),
-                  Expanded(child: Divider(thickness: 2)),
-                ],
-              ),
-              // Social Buttons here
-              //SizedBox(height: 20),
-
-                TextButton(onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  SignupPage(title: '')));
-                }, child: RichText(text: TextSpan(
-                          text: 'Đăng ký',
-                          style: TextStyle(
-                            color: Color(0xFF6F4E37), // Màu chữ
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),)),
-              TextButton(onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPasswordPage()));
-              }, child: RichText(text: TextSpan(
-                          text: 'Quên mật khẩu',
-                          style: TextStyle(
-                            color: Color(0xFF6F4E37), // Màu chữ
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),))
+             
             ],
           ),
         ),
@@ -335,6 +229,57 @@ class _LoginPageState extends State<LoginPage> {
         )
         );
   }
+  bool isEmailValid(String email) {
+  final RegExp emailRegExp = RegExp(
+    r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$',
+    caseSensitive: false,
+    multiLine: false,
+  );
+
+  return emailRegExp.hasMatch(email);
+}
+ 
+Future<void> resetPassword() async {
+ try{
+  final response = await http.post(
+    Uri.parse(resetpass),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'email': emailController.text,
+      'verifycode': verifycodeController.text,
+      'password': newpassController.text,
+    }),
+  );
+  if (response.statusCode == 200) {
+    showDialog(context: context, builder: ( (context) {
+                              return AlertDialog(
+                                title: Text("Đã tạo lại mật khẩu mới"),
+                                actions: [TextButton(onPressed: (){
+                                  Navigator.of(context).pop();
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                                  }, child: Text("Đóng"))],
+                              );
+                            }));
+    print('Reset mật khẩu thành công: ${response.body}');
+  } else {
+    showDialog(context: context, builder: ( (context) {
+                              return AlertDialog(
+                                title: Text("Lỗi khi thay đổi mật khẩu"),
+                                actions: [TextButton(onPressed: (){
+                                  Navigator.of(context).pop();
+                                  //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                                  }, child: Text("Đóng"))],
+                              );
+                            }));
+    print('Lỗi reset mật khẩu: ${response.statusCode}');
+  } 
+ } catch (e) {
+  print('Error: $e');
+ }
+  
+}
 }
 
 // class CustomTextField extends StatelessWidget {

@@ -1,16 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:http/http.dart' as http ;
-import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:newbad/Model/dashboard.dart';
 import 'package:newbad/Service/config.dart';
 import 'package:newbad/Service/dashboardadminsv.dart';
+import 'package:newbad/UI/Admin/addcourtpageadmin.dart';
 import 'package:newbad/UI/Admin/courtpageadmin.dart';
-import 'package:newbad/UI/Admin/loginadmin.dart';
 import 'package:newbad/UI/start.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,7 +36,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
   XFile? _image;
   XFile? _image2;
   List<DashBoardforAdmin> item = [];
-  Timer? _pollingTimer;
+  bool _isImagePicked = false;
   //soluongsan.text.split(',').map((item) => item.trim()).toList();
 
   void addCourt() async {
@@ -75,6 +76,17 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
         isnotValidate = true;
       });
     }
+  }
+  void _clearTextField() {
+    // Sử dụng phương thức clear để xóa text
+    tensan.clear();
+    tenchusan.clear();
+    phonenumber.clear();
+    location.clear();
+    linkvitri.clear();
+    soluongsan.clear();
+    _image = null;
+
   }
 
   Future<void> logoutAdmin(BuildContext context) async {
@@ -163,12 +175,27 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
     final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = pickedImage;
+      _isImagePicked = true;
+      if(_image != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Hình ảnh đã tải lên'),
+                        backgroundColor: Color(0xFF388E3C),
+                        )
+                      );
+                      }
     });
   }
   Future<void> _pickImage2() async {
     final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image2 = pickedImage;
+      if(_image2 != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Hình ảnh đã tải lên'),
+                        backgroundColor: Color(0xFF388E3C),
+                        )
+                      );
+                      }
     });
   }
 
@@ -194,6 +221,18 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
     super.dispose();
     //pageController.dispose();
   }
+//   void navigateAndCheck() {
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(builder: (context) => AddCourtPage(useradminId: useradminId,)),
+//   ).then((value) {
+//     if (value == true) {
+//       setState(() {
+        
+//       });
+//     }
+//   });
+// }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -201,7 +240,10 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
         semanticLabel: 'Admin',
         backgroundColor: Colors.white,
         width: 160,
-        child: ElevatedButton.icon(onPressed: (){logoutAdmin(context);}, icon: Icon(Icons.logout), label: Text("Đăng xuất")),
+        child: ElevatedButton.icon(onPressed: (){logoutAdmin(context);}, icon: Icon(Icons.logout, 
+        color: Colors.green,), label: Text("Đăng xuất", style: TextStyle(
+          color: Colors.green
+        ),)),
       ),//
       appBar: AppBar(
         title: Text("Xin chào ",
@@ -220,7 +262,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                 padding: const EdgeInsets.only(left: 18),
                 child: Row(
                   children: [
-                    Text('$useradminId',
+                    Text('Admin Id: $useradminId',
                     textAlign: TextAlign.left,),
                    
                   ],
@@ -243,87 +285,102 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                       padding: const EdgeInsets.only(left: 130),
                       child: InkWell(
       onTap: () {
+        //navigateAndCheck();
+        Navigator.push(context, MaterialPageRoute(builder: (context) => AddCourtPage(useradminId: useradminId)));
         // Xử lý sự kiện khi nút được nhấn
-         showDialog (context: context, builder: ((context) {
-          return SingleChildScrollView(
-            child: AlertDialog(
-              title: Text('Thêm thông tin sân của bạn'),
-              content: Column(mainAxisSize: MainAxisSize.min,
-              children: [
-                _inputField("Tên sân", tensan),
-                      SizedBox(height: 10),
-                _inputField("Tên chủ sân", tenchusan),
-                SizedBox(height: 10,),
-                _inputField("Số điện thoại", phonenumber),
-                SizedBox(height: 10,),
-                _inputField("Vị trí sân", location),
-                SizedBox(height: 10,),
-                _inputField("Link vị trí",linkvitri),
-                SizedBox(height: 10,),
-                _inputField("Nhập số lượng sân theo mẫu: 1, 2, ...", soluongsan),
-                Row(
-                  children: [
-                    Text("Thêm ảnh mô tả sân của bạn"),
-                  ],
-                ),
+        //  showDialog (context: context, builder: ((context) {
+        //   return SingleChildScrollView(
+        //     child: AlertDialog(
+        //       title: Text('Thêm thông tin sân của bạn'),
+        //       content: Column(mainAxisSize: MainAxisSize.min,
+        //       children: [
+        //         _inputField("Tên sân", tensan),
+        //               SizedBox(height: 10),
+        //         _inputField("Tên chủ sân", tenchusan),
+        //         SizedBox(height: 10,),
+        //         _inputField("Số điện thoại", phonenumber),
+        //         SizedBox(height: 10,),
+        //         _inputField("Vị trí sân", location),
+        //         SizedBox(height: 10,),
+        //         _inputField("Link vị trí",linkvitri),
+        //         SizedBox(height: 10,),
+        //         _inputField("Nhập số lượng sân theo mẫu: 1, 2, ...", soluongsan),
+        //         Row(
+        //           children: [
+        //             Text("Thêm ảnh mô tả sân của bạn"),
+        //           ],
+        //         ),
                 
-                Row(
-                  children: [
-                    IconButton(onPressed: (){
-                      _pickImage();
-                    }, icon: Icon(Icons.add_a_photo)),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text("Thêm mô hình sân của bạn"),
-                  ],
-                ),
-                Row(
-                  children: [
-                    IconButton(onPressed: (){
-                      _pickImage2();
-                    }, icon: Icon(Icons.photo)),
-                  ],
-                ),
-              ],
-              ),
-              actions: [
-                Row(
-                  children: [
-                    TextButton(
-                          child: Text('Đóng'),
-                          onPressed: () {
-                            //print(item[0]);
-
-                            Navigator.of(context).pop(); // Close the dialog
-                          },
-                        ),
-                        SizedBox(width: 130,),
-                    TextButton(
-                          child: Text('Thêm'),
-                          onPressed: () {
-                            addCourt();
-                            //fetchData();
-                            // Add your add to-do code here
+        //         Row(
+        //           children: [
+        //             IconButton(onPressed: (){
+        //               _pickImage();
+                      
+                      
+        //             }, icon: Icon(Icons.add_a_photo)),
+        //           ],
+        //         ),
+        //          if (_image != null && _isImagePicked == true)
+        //                 Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: Text(
+        //     'Đã chọn ảnh:',
+        //     style: TextStyle(fontSize: 16),
+        //     textAlign: TextAlign.center,
+        //   ),
+        // ),
+      
+        //         Row(
+        //           children: [
+        //             Text("Thêm mô hình sân của bạn"),
+        //           ],
+        //         ),
+        //         Row(
+        //           children: [
+        //             IconButton(onPressed: (){
+        //               _pickImage2();
+        //             }, icon: Icon(Icons.photo)),
+        //           ],
+        //         ),
+        //       ],
+        //       ),
+        //       actions: [
+        //         Row(
+        //           children: [
+        //             TextButton(
+        //                   child: Text('Đóng'),
+        //                   onPressed: () {
+        //                     //print(item[0]);
+        //                   _clearTextField();
+        //                     Navigator.of(context).pop(); // Close the dialog
+        //                   },
+        //                 ),
+        //                 SizedBox(width: 130,),
+        //             TextButton(
+        //                   child: Text('Thêm'),
+        //                   onPressed: () {
+        //                     addCourt();
+        //                     _clearTextField();
+        //                     //fetchData();
+        //                     // Add your add to-do code here
                             
-                            showDialog(context: context, builder: ( (context) {
-                              return AlertDialog(
-                                title: Text("Sân của bạn đã được thêm"),
-                                actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Đóng"))],
-                              );
-                            }));
-                            //Navigator.of(context).pop(); // Close the dialog
-                          },
-                        ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        }),
+        //                     showDialog(context: context, builder: ( (context) {
+        //                       return AlertDialog(
+        //                         title: Text("Sân của bạn đã được thêm"),
+        //                         actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Đóng"))],
+        //                       );
+        //                     }));
+        //                     //Navigator.of(context).pop(); // Close the dialog
+        //                   },
+        //                 ),
+        //           ],
+        //         ),
+        //       ],
+        //     ),
+        //   );
+        // }),
         
-        );
+        // );
       },
       child: Container(
         width: 36.0,
@@ -444,17 +501,17 @@ class CardList extends StatelessWidget {
               child: Row(
               children: [
                 //SizedBox(width: 220),
-                Icon(Icons.location_on),
-                Text(
-                              '$location',
-                              style: TextStyle(
-                                color: Color(0xFF0882B4),
-                                fontSize: 12,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                                height: 0,
-                              ),
-                            )
+                // Icon(Icons.location_on),
+                // Text(
+                //               '$location',
+                //               style: TextStyle(
+                //                 color: Color(0xFF0882B4),
+                //                 fontSize: 12,
+                //                 fontFamily: 'Poppins',
+                //                 fontWeight: FontWeight.w500,
+                //                 height: 0,
+                //               ),
+                //             )
               ],
                         ),
             ),

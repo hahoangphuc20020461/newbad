@@ -164,16 +164,27 @@ Future<void> requestLocationPermission() async {
                             (BuildContext context, SearchController controller) {
                       return List<ListTile>.generate(snapshot.data?.length, (int index) {
                         final String item = snapshot.data![index].name;
+                        String nameofchusan = snapshot.data![index].nameofpeople;
                         return ListTile(
                           title: Text(item),
                           onTap: () {
                             print(snapshot.data![index].soluongsan.length);
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => CourtPage(hoten: snapshot.data![index].nameofpeople,
-                     sodienthoai: snapshot.data![index].phonenumber, loc: snapshot.data![index].location, anhthumnail: snapshot.data![index].nameofpeople,
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => Scaffold(
+              //   body: CardList(name: snapshot.data![index].name,
+              //            location: snapshot.data![index].location,
+              //             hotenchusan: snapshot.data![index].nameofpeople, sodienthoai: snapshot.data![index].phonenumber,
+              //              vitritrongsan: snapshot.data![index].phonenumber, anhthumnail: snapshot.data![index].image,
+              //               id: snapshot.data![index].id, soluongsan: snapshot.data![index].soluongsan.length,
+              //                listsan: snapshot.data![index].soluongsan, image: snapshot.data![index].image,
+              //                 urlSan: snapshot.data![index].linklocation, model2d: snapshot.data![index].model2d, ),
+              // ),));
+
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => CourtPage(hoten: nameofchusan,
+                     sodienthoai: snapshot.data![index].phonenumber, loc: snapshot.data![index].location, anhthumnail: snapshot.data![index].image,
                       dashboardId: snapshot.data![index].id, namecourt: snapshot.data![index].name, soluongsan: snapshot.data![index].soluongsan.length, 
                       listsan: snapshot.data![index].soluongsan, urlSan: snapshot.data![index].linklocation, model2d: snapshot.data![index].model2d,
                       )));
-                              //controller.closeView(item);
+                             // controller.closeView(item);
                             
                           },
                         );
@@ -365,20 +376,20 @@ class CardList extends StatelessWidget {
               child: Row(
               children: [
                 //SizedBox(width: 220),
-                Icon(Icons.location_on),
-                Text(
-                              '$location',
-                              softWrap: true,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: null,
-                              style: TextStyle(
-                                color: Color(0xFF0882B4),
-                                fontSize: 12,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                                height: 0,
-                              ),
-                            )
+                // Icon(Icons.location_on),
+                // Text(
+                //               '$location',
+                //               softWrap: true,
+                //               overflow: TextOverflow.ellipsis,
+                //               maxLines: null,
+                //               style: TextStyle(
+                //                 color: Color(0xFF0882B4),
+                //                 fontSize: 12,
+                //                 fontFamily: 'Poppins',
+                //                 fontWeight: FontWeight.w500,
+                //                 height: 0,
+                //               ),
+                //             )
               ],
                         ),
             ),

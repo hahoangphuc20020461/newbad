@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:newbad/Service/config.dart';
 import 'package:tflite_v2/tflite_v2.dart';
@@ -130,6 +131,10 @@ class _DanhGiasanPageState extends State<DanhGiasanPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back_ios_new,
+        color: Colors.white,)),
         title: Text(
           "Đánh giá sân",
           style: TextStyle(color: Colors.white, fontSize: 25),
@@ -159,7 +164,7 @@ class _DanhGiasanPageState extends State<DanhGiasanPage> {
                       height: 20,
                     ),
                     _image == null ? Container() : _outputs != null ? 
-                    Text(_outputs![0]["label"],style: TextStyle(color: Colors.black,fontSize: 20),
+                    Text(_outputs![0]["label"].split(' ').sublist(1).join(' '),style: TextStyle(color: Colors.black,fontSize: 20),
                     ) : Container(child: Text("")),
         
                   ],
@@ -168,7 +173,12 @@ class _DanhGiasanPageState extends State<DanhGiasanPage> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.01,
               ),
-              FloatingActionButton(
+              
+              SizedBox(height: 20,),
+              Row(
+                children: [
+                  SizedBox(width: 10,),
+                  FloatingActionButton(
                 tooltip: 'Pick Image',
                 onPressed: pickImage,
                 child: Icon(Icons.photo,
@@ -177,13 +187,49 @@ class _DanhGiasanPageState extends State<DanhGiasanPage> {
                 ),
                 backgroundColor: Colors.green,
               ),
-              SizedBox(height: 20,),
-              _inputField('Đánh giá sân ở đây', addcomment ),
-              SizedBox(height: 20,),
-              ElevatedButton(onPressed: (){
+              SizedBox(width: 10,),
+                  Container(
+                    width: 250,
+                    child: _inputField('Đánh giá sân ở đây', addcomment )),
+              //SizedBox(width: 10,),
+              IconButton(onPressed: (){
                 updateLabel();
-                newdanhgia('Có ai đó đã đánh giá sân của bạn là ${addcomment.text} và nhận xét rằng ${_displayedLabel}');
-              }, child: Text('Thêm đánh giá')),
+                if (_image != null) {
+                   newdanhgia('Có ai đó đã đánh giá sân của bạn là ${addcomment.text} và nhận xét rằng ${_displayedLabel}');
+                } else {
+                  newdanhgia('Có ai đó đã đánh giá sân của bạn là ${addcomment.text}');
+                }
+               showDialog(context: context, builder: ( (context) {
+                              return AlertDialog(
+                                iconColor: Colors.green,
+                                backgroundColor: Colors.white,
+                                title: Text("Cảm ơn bạn đã gửi đánh giá cho chúng tôi",
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w400
+                                ),),
+                                actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Đóng"))],
+                              );
+                            }));
+                            addcomment.clear();
+              }, icon: Icon(Icons.send_rounded,
+              color: Colors.green,
+              size: 40,))
+                ],
+              ),
+              SizedBox(height: 20,),
+              // ElevatedButton(onPressed: (){
+              //   updateLabel();
+              //   newdanhgia('Có ai đó đã đánh giá sân của bạn là ${addcomment.text} và nhận xét rằng ${_displayedLabel}');
+              // },
+              // style: ButtonStyle(
+              //   backgroundColor: MaterialStatePropertyAll(Colors.green)
+              // ),
+              //  child: Text('Thêm đánh giá',
+              //  style: TextStyle(
+              //   color: Color(0xFF0D2D3A)
+              //  ),)),
             ],
           ),
         ),

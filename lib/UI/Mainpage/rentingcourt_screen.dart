@@ -56,7 +56,15 @@ void doSomethingWithToken() async {
   Widget build(BuildContext context) {
     return  Scaffold(
       appBar: AppBar(
-        title: Text('Sân đang thuê'),
+        automaticallyImplyLeading: false,
+        title: Text('Sân đã thuê',
+        style: TextStyle(
+              color: Color(0xFF0D2D3A),
+              fontSize: 25,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              height: 0,
+                            ),),
         // actions: [
         //   IconButton(
         //     icon: Icon(Icons.more_vert),
@@ -101,7 +109,14 @@ void doSomethingWithToken() async {
       child: Column(
         children: <Widget>[
           ListTile(
-            title: Text(namecourt),
+            title: Text(namecourt,
+            style: TextStyle(
+              color: Color(0xFF0D2D3A),
+              fontSize: 17,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w400,
+              height: 0,
+                            ),),
             subtitle: Text('Sân $date'),
             trailing: Image.asset('assets/field.png'),
             onTap: () {

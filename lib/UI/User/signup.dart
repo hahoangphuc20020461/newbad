@@ -15,19 +15,26 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  static const Color kbackgroundColor = Color(0xFFf1f1f1);
-  static const Color kbackgroundAppbar = Color.fromARGB(255, 123, 51, 25);
+  // static const Color kbackgroundColor = Color(0xFFf1f1f1);
+  // static const Color kbackgroundAppbar = Color.fromARGB(255, 123, 51, 25);
   bool isnotValidate = false;
 
 
   TextEditingController userNameController = TextEditingController();
   TextEditingController passController =TextEditingController();
+  TextEditingController repassController =TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController hoten = TextEditingController();
+  TextEditingController phone = TextEditingController();
 
   void registerUser() async {
     if (userNameController.text.isNotEmpty && passController.text.isNotEmpty) {
       var regBody = {
+        "email": emailController.text,
         "username" : userNameController.text,
-        "password": passController.text
+        "password": passController.text,
+        "peoplename": hoten.text,
+        "phonenumber": phone.text
       };
       var response = await http.post(Uri.parse(registration),
       body: jsonEncode(regBody),
@@ -42,6 +49,13 @@ class _SignupPageState extends State<SignupPage> {
       }
     } else {
       setState(() {
+        AlertDialog(
+                                title: Text("Email đã có người đăng kí"),
+                                actions: [TextButton(onPressed: (){
+                                  Navigator.of(context).pop();
+                                  //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                                  }, child: Text("Đóng"))],
+                              );
         isnotValidate = true;
       });
     }
@@ -62,7 +76,7 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xFFFFF8E1),
+        //backgroundColor: Color(0xFFFFF8E1),
         body: SingleChildScrollView(
           child: Padding(
           padding: EdgeInsets.all(25.0),
@@ -70,7 +84,17 @@ class _SignupPageState extends State<SignupPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              SizedBox(height: 30), // Adjust the space as per your design needs
+              Padding(
+                padding: const EdgeInsets.only(left: 0),
+                child: Row(
+                  children: [
+                    IconButton(onPressed: (){
+                      Navigator.pop(context);
+                    }, icon: Icon(Icons.arrow_back_ios)),
+                  ],
+                ),
+              ),
+              SizedBox(height: 0), // Adjust the space as per your design needs
               Text(
                 'BadEasy',
                 textAlign: TextAlign.center,
@@ -95,13 +119,22 @@ class _SignupPageState extends State<SignupPage> {
                         
                       ),
               SizedBox(height: 20),
+              _inputField('Email', emailController),
+              Divider(),
+              SizedBox(height: 20),
+              _inputField('Họ và tên', hoten),
+              Divider(),
+              SizedBox(height: 20),
+              _inputField('Số điện thoại', phone),
+              Divider(),
+              SizedBox(height: 20),
               _inputField('Username', userNameController),
               Divider(),
               SizedBox(height: 20),
               _inputField('Password', passController, isPassword: true),
               Divider(),
               SizedBox(height: 20),
-              _inputField('Nhập lại Password', passController, isPassword: true),
+              _inputField('Nhập lại Password', repassController, isPassword: true),
               Divider(),
               SizedBox(height: 20),
               ElevatedButton(
@@ -111,34 +144,21 @@ class _SignupPageState extends State<SignupPage> {
                   padding: EdgeInsets.symmetric(vertical: 15),
                 ),
                 onPressed: () {
-                  registerUser();
+                  if (passController.text == repassController.text) {
+                    registerUser();
+                  } else {
+                    AlertDialog(
+                                title: Text("Mật khẩu nhập lại không khớp"),
+                                actions: [TextButton(onPressed: (){
+                                  Navigator.of(context).pop();
+                                  //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                                  }, child: Text("Đóng"))],
+                              );
+                  }
+                  
                 },
               ),
-              SizedBox(height: 20),
-              Row(
-                children: <Widget>[
-                  Expanded(child: Divider(thickness: 2)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      'Đăng nhập với tư cách',
-                      style: TextStyle(
-                        color: Color(0xFF6F4E37), // Màu chữ
-                      ),
-                    ),
-                  ),
-                  Expanded(child: Divider(thickness: 2)),
-                ],
-              ),
-              // Social Buttons here
-              //SizedBox(height: 20),
-              TextButton(onPressed: () {}, child: RichText(text: TextSpan(
-                          text: 'Admin',
-                          style: TextStyle(
-                            color: Color(0xFF6F4E37), // Màu chữ
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),)),
+              
               
                 
               
@@ -217,7 +237,7 @@ Widget _inputField(String hinttext, TextEditingController textEditingController,
   );
   return TextField(
     style: TextStyle(
-      color: kbackgroundColor,
+      color: Colors.black,
     ),
     controller: textEditingController,
     decoration: InputDecoration(

@@ -4,6 +4,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http ;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:newbad/Model/dashboard.dart';
 import 'package:newbad/Service/config.dart';
@@ -55,6 +56,16 @@ class _SchedulePageState extends State<SchedulePage> {
   String isoDateDirect = DateTime.now().toIso8601String();
   Future<List<DashBoardforAdmin>>? _futureDashboardData;
   DateTime selectedDate = DateTime.now();
+  
+
+ // DateTime vnTime = TimeConverter.convertToVietnamTime(DateTime.now());
+
+ String onDateSelected(DateTime date) {
+  String formattedDate = DateFormat('dd/MM/yyyy').format(date);;
+  return formattedDate;
+  // Sử dụng formattedDate để cập nhật UI hoặc state
+}
+
 
 void updateSelectedDateString() {
   setState(() {
@@ -80,6 +91,10 @@ void goToPreviousDay() {
 
 void _selectDate() async {
   final DateTime? picked = await showDatePicker(
+    errorInvalidText: "Không hợp lệ",
+    helpText: "Chọn ngày thuê",
+    confirmText: 'Đồng ý',
+    cancelText: 'Hủy',
     context: context,
     initialDate: DateTime.now(),
     firstDate: DateTime(2000),
@@ -168,7 +183,7 @@ Future<void> _loadUserId() async {
                                 actions: [TextButton(onPressed: (){
                                   Navigator.of(context).pop();
                                   ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Cảm ơn bạn đã đánh giá  sao cho món ăn này'),
+                        SnackBar(content: Text('Cảm ơn bạn đã đặt sân, chúc bạn chơi vui vẻ'),
                         backgroundColor: Color(0xFF388E3C),
                         )
                       );
@@ -256,9 +271,11 @@ Future<void> _loadUserId() async {
       print('Request failed with status: ${response.statusCode}.');
     }
   } on Exception catch (e) {
+    onDateSelected(selectedDate);
     // Exception handling
     makePayment();
-    newNotify('Bạn đã đặt ${widget.tensan} lúc $selectedDate từ ${start} đến ${end}');
+    String formattedDate = onDateSelected(selectedDate);
+    newNotify('Bạn đã đặt ${widget.tensan} lúc $formattedDate từ ${start} đến ${end}');
     print('Exception occurred: $e');
   }
     //  else {
@@ -298,9 +315,16 @@ Future<void> _loadUserId() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Đặt lịch ngày trực quan'),
+        title: Text('Đặt lịch ngày trực quan',
+        style: TextStyle(
+              color: Color(0xFF0D2D3A),
+              fontSize: 25,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              height: 0,
+                            ),),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.of(context).pop();
             // Logic to go back or show previous day's schedule
@@ -308,88 +332,103 @@ Future<void> _loadUserId() async {
         ),
         
       ),
-      body:Column(
-        children: [ 
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-            
-            children: [
-              IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              goToPreviousDay();
-              // Logic to show next day's schedule
-            },
-          ),
-              IconButton(
-            icon: Icon(Icons.calendar_today),
-            onPressed: () {
-              _selectDate();
-              // Logic to select date
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.arrow_forward),
-            onPressed: () {
-              goToNextDay();
-              // Logic to show next day's schedule
-            },
-          ),
-            ],
-          ),
-          Center(child: Text("${selectedDate.toLocal()}".split(' ')[0])),
-          SizedBox(height: 20,),
-          GridView.count(
-                  crossAxisCount: 3, // Số cột trong GridView
-                  childAspectRatio: 1.0, // Tỉ lệ của từng item (rộng/cao)
-                  mainAxisSpacing: 3.0, // Khoảng cách giữa các hàng
-                  crossAxisSpacing: 3.0, // Khoảng cách giữa các cột
-                  shrinkWrap: true, // Cho phép GridView co lại để vừa với nội dung
-                  physics: NeverScrollableScrollPhysics(), // Vô hiệu hóa cuộn trong GridView
-                  children: List.generate(listend.length, (index) => Hourly(starttime: liststart[index],
-                   endtime: listend[index], click: click, press: () { 
-                    addCourt(liststart[index], listend[index]); 
-                    
-                    //makePayment(liststart[index], listend[index], 'Bạn đã thuê ${widget.tensan} từ ${liststart[index]} đến ${listend[index]}');
-                   
-                    // if (click == false) {
-                    //   button();
-                    // }
-                    
-                    },)),
-                )
-        //   FutureBuilder(
-        //             future: _futureDashboardData,
-        //             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) { 
-        //               if (snapshot.connectionState == ConnectionState.waiting) {
-        //       return Center(child: CircularProgressIndicator());
-        //     } else if (snapshot.hasError) {
-        //       return Center(child: Text('Error: ${snapshot.error}'));
-        //     } else {
-        //       return GridView.count(
-        //           crossAxisCount: 3, // Số cột trong GridView
-        //           childAspectRatio: 1.0, // Tỉ lệ của từng item (rộng/cao)
-        //           mainAxisSpacing: 3.0, // Khoảng cách giữa các hàng
-        //           crossAxisSpacing: 3.0, // Khoảng cách giữa các cột
-        //           shrinkWrap: true, // Cho phép GridView co lại để vừa với nội dung
-        //           physics: NeverScrollableScrollPhysics(), // Vô hiệu hóa cuộn trong GridView
-        //           children: List.generate(listend.length, (index) => Hourly(starttime: liststart[index],
-        //            endtime: listend[index], click: click, press: () { 
-        //             addCourt(liststart[index], listend[index]); 
-        //             makePayment();
-        //             //makePayment(liststart[index], listend[index], 'Bạn đã thuê ${widget.tensan} từ ${liststart[index]} đến ${listend[index]}');
-                   
-        //             // if (click == false) {
-        //             //   button();
-        //             // }
-                    
-        //             },)),
-        //         );
-        //     }
-        //             }
-        // ),
-        ]
+      body:SingleChildScrollView(
+        child: Column(
+          children: [ 
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+              
+              children: [
+                IconButton(
+              icon: Icon(Icons.arrow_back,
+              color: Color(0xFF0D2D3A)),
+              onPressed: () {
+                goToPreviousDay();
+                // Logic to show next day's schedule
+              },
+            ),
+            SizedBox(width: 40,),
+                IconButton(
+              icon: Icon(Icons.calendar_today,
+              color: Colors.green,),
+              onPressed: () {
+                _selectDate();
+                // Logic to select date
+              },
+            ),
+            SizedBox(width: 40,),
+            IconButton(
+              icon: Icon(Icons.arrow_forward,
+              color: Color(0xFF0D2D3A)),
+              onPressed: () {
+                goToNextDay();
+                // Logic to show next day's schedule
+              },
+            ),
+              ],
+            ),
+            Center(child: Text("${selectedDate.toLocal()}".split(' ')[0],
+            style: TextStyle(
+                color: Color(0xFF0D2D3A),
+                fontSize: 18,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w600,
+                height: 0,
+                              ),),
+            ),
+            SizedBox(height: 20,),
+            GridView.count(
+                    crossAxisCount: 3, // Số cột trong GridView
+                    childAspectRatio: 1.0, // Tỉ lệ của từng item (rộng/cao)
+                    mainAxisSpacing: 3.0, // Khoảng cách giữa các hàng
+                    crossAxisSpacing: 3.0, // Khoảng cách giữa các cột
+                    shrinkWrap: true, // Cho phép GridView co lại để vừa với nội dung
+                    physics: NeverScrollableScrollPhysics(), // Vô hiệu hóa cuộn trong GridView
+                    children: List.generate(listend.length, (index) => Hourly(starttime: liststart[index],
+                     endtime: listend[index], click: click, press: () { 
+                      addCourt(liststart[index], listend[index]); 
+                      
+                      //makePayment(liststart[index], listend[index], 'Bạn đã thuê ${widget.tensan} từ ${liststart[index]} đến ${listend[index]}');
+                     
+                      // if (click == false) {
+                      //   button();
+                      // }
+                      
+                      },)),
+                  )
+          //   FutureBuilder(
+          //             future: _futureDashboardData,
+          //             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) { 
+          //               if (snapshot.connectionState == ConnectionState.waiting) {
+          //       return Center(child: CircularProgressIndicator());
+          //     } else if (snapshot.hasError) {
+          //       return Center(child: Text('Error: ${snapshot.error}'));
+          //     } else {
+          //       return GridView.count(
+          //           crossAxisCount: 3, // Số cột trong GridView
+          //           childAspectRatio: 1.0, // Tỉ lệ của từng item (rộng/cao)
+          //           mainAxisSpacing: 3.0, // Khoảng cách giữa các hàng
+          //           crossAxisSpacing: 3.0, // Khoảng cách giữa các cột
+          //           shrinkWrap: true, // Cho phép GridView co lại để vừa với nội dung
+          //           physics: NeverScrollableScrollPhysics(), // Vô hiệu hóa cuộn trong GridView
+          //           children: List.generate(listend.length, (index) => Hourly(starttime: liststart[index],
+          //            endtime: listend[index], click: click, press: () { 
+          //             addCourt(liststart[index], listend[index]); 
+          //             makePayment();
+          //             //makePayment(liststart[index], listend[index], 'Bạn đã thuê ${widget.tensan} từ ${liststart[index]} đến ${listend[index]}');
+                     
+          //             // if (click == false) {
+          //             //   button();
+          //             // }
+                      
+          //             },)),
+          //         );
+          //     }
+          //             }
+          // ),
+          ]
+        ),
       )
       // floatingActionButton: FloatingActionButton(
       //   child: Icon(Icons.add),
@@ -400,6 +439,16 @@ Future<void> _loadUserId() async {
     );
   }
 }
+
+// class YourClass {
+//   DateTime? selectedDate;
+//   String? formattedDate;
+
+//   YourClass() {
+//     selectedDate = DateTime.now(); // Khởi tạo ngày
+//     formattedDate = DateFormat('dd/MM/yyyy').format(selectedDate!); // Định dạng ngày
+//   }
+// }
 
 class Hourly extends StatelessWidget {
   const Hourly({super.key, required this.starttime, required this.endtime, required this.click, required this.press, });
@@ -417,24 +466,16 @@ class Hourly extends StatelessWidget {
           width: 120,
           child: FloatingActionButton(onPressed: (){
             press();
-            // if  (click == true) {
-            //   showDialog(context: context, builder: ( (context) {
-            //                   return AlertDialog(
-            //                     title: Text("Ca này đã được đặt trước, vui lòng chọn ca khác"),
-            //                     actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Đóng"))],
-            //                   );
-            //                 }));
-            // } else {
-            //   showDialog(context: context, builder: ( (context) {
-            //                   return AlertDialog(
-            //                     title: Text("Đặt sân thành công"),
-            //                     actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Đóng"))],
-            //                   );
-            //                 }));
-            // }
-            
           },
-          child: Text('$starttime - $endtime'),
+          backgroundColor: const Color.fromARGB(255, 116, 221, 119),
+          child: Text('$starttime - $endtime',
+          style: TextStyle(
+              color: Color(0xFF0D2D3A),
+              
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              height: 0,
+                            ),),
           ),
           decoration: BoxDecoration(
              

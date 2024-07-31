@@ -43,7 +43,15 @@ void doSomethingWithToken() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thông báo'),
+        automaticallyImplyLeading: false,
+        title: Text('Thông báo',
+        style: TextStyle(
+              color: Color(0xFF0D2D3A),
+              fontSize: 25,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              height: 0,
+                            ),),
         
       ),
       body:
@@ -66,12 +74,7 @@ void doSomethingWithToken() async {
             // ),
             title: Text(snapshot.data[index].courtname), // Replace with actual data
             subtitle: Text(snapshot.data[index].message), // Replace with actual data
-            trailing: IconButton(
-              icon: Icon(Icons.more_vert),
-              onPressed: () {
-                // Handle more action
-              },
-            ),
+            
           );
             } else {
               return SizedBox();
